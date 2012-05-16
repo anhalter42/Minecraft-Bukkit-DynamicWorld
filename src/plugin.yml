@@ -1,0 +1,4 @@
+## YAML Template.
+name: DynamicWorld
+main: com.mahn42.anhalter42.dynamicworld.DynamicWorld
+version: 0.1

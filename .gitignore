@@ -4,3 +4,6 @@
 *.jar
 *.war
 *.ear
+/com.mahn42.anhalter42.dynamicworld/nbproject/private/
+/dist/
+/build/
