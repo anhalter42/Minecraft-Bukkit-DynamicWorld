@@ -12,3 +12,31 @@ So können Schluchten durch aufreissen der Erde entstehen. Mit Wasseranteilen od
 Es können Berge entstehen durch Anheben der Erde. Mit Lavaanteilen oder auch ohne.
 Es können Senken entstehen durch absenken der Erde mit Wasseranteilen oder auch ohne.
 Es kann Überflutungen geben.
+
+Schutz
+------
+
+Es gibt drei Götter. Der Gott des Wasser beeinflußt alles was bei den Naturkatastrophen mit Wasser zu tun hat.
+Der Gott des Feuers alles was mit Lava und Feuer zu tun hat.
+Der Gott der Erde alles was mit dem Verändern, Heben und Senken der Erde zu tun hat.
+Man kann eine Region vor den Göttern schützen, in dem man entsprechende Statuen baut.
+Je größer und mächtiger die Statue gebaut ist, desto größer das geschützte Gebiet.
+
+Der Wasser Gott
+---------------
+
+Eine Wasser Gott Status muss eine Art Schale darstellen in welcher stehendes Wasser ist.
+Der Einflussfaktor ergibt sich aus der Höhe der Status und der Menge des Wassers in der Schale.
+
+Der Feuer Gott
+--------------
+
+Eine Feuer Gott Status muss eine Art Schale darstellen in welcher stehende Lava ist.
+Der Einflussfaktor ergibt sich aus der Höhe der Status und der Menge des Lava in der Schale.
+Alternativ kann auch brennende Steine (Netherstein) genutzt werden.
+Dazu muss das Feuer so hoch wie möglich auf einer fackelartigen Erhöhung sein.
+
+Der Erde Gott
+-------------
+
+???
