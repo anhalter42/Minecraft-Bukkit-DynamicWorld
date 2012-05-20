@@ -28,7 +28,7 @@ public class DynamicWorld extends JavaPlugin {
     public void onEnable() {
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         fSyncBlockSetter = new SyncBlockSetter(this);
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, fSyncBlockSetter, 10, 5);
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, fSyncBlockSetter, 10, 2);
     }
 
     public void setTypeIdAndData(Location aLocation, Material aMaterial, byte aData, boolean  aPhysics) {

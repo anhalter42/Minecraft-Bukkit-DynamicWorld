@@ -113,7 +113,7 @@ public class WaterFlood  implements Runnable {
                 } else { // Mode.Unflood
                     if (lMat.getId() == 8 //lMat.equals(Material.WATER)
                             || lMat.getId() == 9) {
-                        plugin.setTypeIdAndData(lBlock.getLocation(), Material.AIR, (byte)0, true);
+                        plugin.setTypeIdAndData(lBlock.getLocation(), Material.AIR, (byte)0, false);
                         fMaxBlocks--;
                         for(Delta lDelta : fDeltas) {
                             WaterFloodItem lNew = new WaterFloodItem();
@@ -127,7 +127,9 @@ public class WaterFlood  implements Runnable {
                     }
                 }
             }
-            Logger.getLogger("WaterFlood").info(new Integer(taskId) + " size = " + new Integer(fItems.size()) + " new = " + new Integer(lNewItems.size()) + " all = " + new Integer(fAllItems.size()));
+            Logger.getLogger("WaterFlood").info(new Integer(taskId) + " size = " + new Integer(fItems.size())
+                    + " new = " + new Integer(lNewItems.size())
+                    + " all = " + new Integer(fAllItems.size()));
             fItems.clear();
             fItems = lNewItems;
             if (fItems.isEmpty() || fMaxBlocks <= 0) {
