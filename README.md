@@ -26,13 +26,13 @@ Der Wasser Gott
 ---------------
 
 Eine Wasser Gott Status muss eine Art Schale darstellen in welcher stehendes Wasser ist.
-Der Einflussfaktor ergibt sich aus der Höhe der Status und der Menge des Wassers in der Schale.
+Der Einflussfaktor ergibt sich aus der Höhe der Statue und der Menge des Wassers in der Schale.
 
 Der Feuer Gott
 --------------
 
 Eine Feuer Gott Status muss eine Art Schale darstellen in welcher stehende Lava ist.
-Der Einflussfaktor ergibt sich aus der Höhe der Status und der Menge des Lava in der Schale.
+Der Einflussfaktor ergibt sich aus der Höhe der Statue und der Menge des Lava in der Schale.
 Alternativ kann auch brennende Steine (Netherstein) genutzt werden.
 Dazu muss das Feuer so hoch wie möglich auf einer fackelartigen Erhöhung sein.
 
@@ -40,3 +40,9 @@ Der Erde Gott
 -------------
 
 ???
+
+Nutzung
+-------
+
+Hat man eine Statue gebaut, so muss diese aktiviert werden.
+Dies wird durch Schlagen mit rechts Click mit einer Schaufel auf einen Block der Status erreicht.
