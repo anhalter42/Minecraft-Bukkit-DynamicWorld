@@ -17,6 +17,8 @@ import org.bukkit.block.Block;
 public class WaterFlood  implements Runnable {
 
     public enum Mode {
+        Fill,
+        Unfill,
         Flood,
         Unflood
     }
@@ -78,10 +80,13 @@ public class WaterFlood  implements Runnable {
                 lItem.y = y + 1;
                 lItem.z = z;
                 fItems.add(lItem);
-                if (mode == Mode.Flood) {
-                    fMaxBlocks = 10000;
-                } else {
-                    fMaxBlocks = 15000;
+                switch (mode) {
+                    case Fill: case Flood:
+                        fMaxBlocks = 10000;
+                        break;
+                    case Unfill: case Unflood:
+                        fMaxBlocks = 15000;
+                        break;
                 }
                 fInit = true;
             }
@@ -90,41 +95,44 @@ public class WaterFlood  implements Runnable {
             for(WaterFloodItem lItem : fItems) {
                 Block lBlock = world.getBlockAt(lItem.x, lItem.y, lItem.z);
                 Material lMat = lBlock.getType();
-                if (mode == Mode.Flood) {
-                    if (lMat.equals(Material.AIR)
-                            || lMat.equals(Material.WATER_LILY)
-                            || lMat.getId() == 8 //lMat.equals(Material.WATER)
-                            || lMat.getId() == 9
-                            || lMat.getId() == 31 // lMat.equals(Material.GRASS)
-                            || lMat.equals(Material.RED_ROSE)
-                            || lMat.equals(Material.YELLOW_FLOWER)) {
-                        plugin.setTypeIdAndData(lBlock.getLocation(), Material.WATER, (byte)0, true);
-                        fMaxBlocks--;
-                        for(Delta lDelta : fDeltas) {
-                            WaterFloodItem lNew = new WaterFloodItem();
-                            lNew.x = lItem.x + lDelta.dx;
-                            lNew.y = lItem.y + lDelta.dy;
-                            lNew.z = lItem.z + lDelta.dz;
-                            if (!lNewItems.contains(lNew) && !fItems.contains(lNew) && !fAllItems.contains(lNew)) {
-                                lNewItems.add(lNew);
+                switch (mode) {
+                    case Fill: case Flood:
+                        if (lMat.equals(Material.AIR)
+                                || lMat.equals(Material.WATER_LILY)
+                                || lMat.getId() == 8 //lMat.equals(Material.WATER)
+                                || lMat.getId() == 9
+                                || lMat.getId() == 31 // lMat.equals(Material.GRASS)
+                                || lMat.equals(Material.RED_ROSE)
+                                || lMat.equals(Material.YELLOW_FLOWER)) {
+                            plugin.setTypeAndData(lBlock.getLocation(), Material.WATER, (byte)0, true);
+                            fMaxBlocks--;
+                            for(Delta lDelta : fDeltas) {
+                                WaterFloodItem lNew = new WaterFloodItem();
+                                lNew.x = lItem.x + lDelta.dx;
+                                lNew.y = lItem.y + lDelta.dy;
+                                lNew.z = lItem.z + lDelta.dz;
+                                if (!lNewItems.contains(lNew) && !fItems.contains(lNew) && !fAllItems.contains(lNew)) {
+                                    lNewItems.add(lNew);
+                                }
                             }
                         }
-                    }
-                } else { // Mode.Unflood
-                    if (lMat.getId() == 8 //lMat.equals(Material.WATER)
-                            || lMat.getId() == 9) {
-                        plugin.setTypeIdAndData(lBlock.getLocation(), Material.AIR, (byte)0, false);
-                        fMaxBlocks--;
-                        for(Delta lDelta : fDeltas) {
-                            WaterFloodItem lNew = new WaterFloodItem();
-                            lNew.x = lItem.x + lDelta.dx;
-                            lNew.y = lItem.y + lDelta.dy;
-                            lNew.z = lItem.z + lDelta.dz;
-                            if (!lNewItems.contains(lNew) && !fItems.contains(lNew) && !fAllItems.contains(lNew)) {
-                                lNewItems.add(lNew);
+                        break;
+                    case Unfill: case Unflood:
+                        if (lMat.getId() == 8 //lMat.equals(Material.WATER)
+                                || lMat.getId() == 9) {
+                            plugin.setTypeAndData(lBlock.getLocation(), Material.AIR, (byte)0, false);
+                            fMaxBlocks--;
+                            for(Delta lDelta : fDeltas) {
+                                WaterFloodItem lNew = new WaterFloodItem();
+                                lNew.x = lItem.x + lDelta.dx;
+                                lNew.y = lItem.y + lDelta.dy;
+                                lNew.z = lItem.z + lDelta.dz;
+                                if (!lNewItems.contains(lNew) && !fItems.contains(lNew) && !fAllItems.contains(lNew)) {
+                                    lNewItems.add(lNew);
+                                }
                             }
                         }
-                    }
+                        break;
                 }
             }
             Logger.getLogger("WaterFlood").info(new Integer(taskId) + " size = " + new Integer(fItems.size())

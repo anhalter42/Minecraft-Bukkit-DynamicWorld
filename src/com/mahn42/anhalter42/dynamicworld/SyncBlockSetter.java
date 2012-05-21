@@ -35,7 +35,7 @@ public class SyncBlockSetter implements Runnable {
         plugin = aPlugin;
     }
 
-    public void setTypeIdAndData(Location aLocation, Material aMaterial, byte aData, boolean  aPhysics) {
+    public void setTypeAndData(Location aLocation, Material aMaterial, byte aData, boolean  aPhysics) {
         SyncBlockSetterItem lItem = new SyncBlockSetterItem();
         lItem.location = aLocation;
         lItem.material = aMaterial;

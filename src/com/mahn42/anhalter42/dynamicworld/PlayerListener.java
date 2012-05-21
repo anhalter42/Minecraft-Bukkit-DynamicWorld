@@ -31,7 +31,7 @@ public class PlayerListener implements Listener {
         World lWorld = lPlayer.getWorld();
         Material lInHand = event.getItem().getType();
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            if (event.hasItem() && (lInHand.equals(Material.APPLE))) {
+            if (event.hasItem() && (lInHand.equals(Material.APPLE) || lInHand.equals(Material.BOOK))) {
                 Block lBlock = event.getClickedBlock();
                 if (lBlock != null) { 
                     LandSlip lLandSlip = new LandSlip(plugin);
@@ -39,6 +39,11 @@ public class PlayerListener implements Listener {
                     lLandSlip.x = lBlock.getX();
                     lLandSlip.z = lBlock.getZ();
                     lLandSlip.radius = 5;
+                    if (lInHand.equals(Material.APPLE)) {
+                        lLandSlip.mode = LandSlip.Mode.Down;
+                    } else {
+                        lLandSlip.mode = LandSlip.Mode.Up;
+                    }
                     lLandSlip.strength = 1;
                     lLandSlip.taskId = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, lLandSlip, 2, 10);
                     lLandSlip.active = true;

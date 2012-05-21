@@ -31,8 +31,8 @@ public class DynamicWorld extends JavaPlugin {
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fSyncBlockSetter, 10, 2);
     }
 
-    public void setTypeIdAndData(Location aLocation, Material aMaterial, byte aData, boolean  aPhysics) {
-        fSyncBlockSetter.setTypeIdAndData(aLocation, aMaterial, aData, aPhysics);
+    public void setTypeAndData(Location aLocation, Material aMaterial, byte aData, boolean  aPhysics) {
+        fSyncBlockSetter.setTypeAndData(aLocation, aMaterial, aData, aPhysics);
     }
     
     protected ArrayList<WaterFlood> fWaterFloods = new ArrayList<WaterFlood>();
