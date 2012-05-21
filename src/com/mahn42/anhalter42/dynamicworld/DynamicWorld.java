@@ -7,6 +7,7 @@ package com.mahn42.anhalter42.dynamicworld;
 import java.util.ArrayList;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -15,20 +16,23 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class DynamicWorld extends JavaPlugin {
 
+    public int configSyncBlockSetterTicks = 2;
+    public int configWaterFloodTicks = 10;
+    
     protected SyncBlockSetter fSyncBlockSetter;
     
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
     }
     
     @Override
     public void onEnable() {
+        readDynamicWorldConfig();
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         fSyncBlockSetter = new SyncBlockSetter(this);
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, fSyncBlockSetter, 10, 2);
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, fSyncBlockSetter, 10, configSyncBlockSetterTicks);
     }
 
     public void setTypeAndData(Location aLocation, Material aMaterial, byte aData, boolean  aPhysics) {
@@ -37,15 +41,29 @@ public class DynamicWorld extends JavaPlugin {
     
     protected ArrayList<WaterFlood> fWaterFloods = new ArrayList<WaterFlood>();
     
-    public WaterFlood createWaterFlood(int aX, int aY, int aZ) {
-        WaterFlood lFlood = new WaterFlood(this);
-        lFlood.x = aX;
-        lFlood.y = aY;
-        lFlood.z = aZ;
-        if (!fWaterFloods.contains(lFlood)) {
-            return lFlood;
-        } else {
-            return null;
+    public void startWaterFlood(WaterFlood aFlood) {
+        fWaterFloods.add(aFlood);
+        aFlood.taskId = getServer().getScheduler().scheduleAsyncRepeatingTask(this, aFlood, 2, configWaterFloodTicks);
+        aFlood.active = true;
+    }
+    
+    public void stopWaterFlood(WaterFlood aFlood) {
+        fWaterFloods.remove(aFlood);
+        getServer().getScheduler().cancelTask(aFlood.taskId);
+    }
+
+    boolean isWaterFloodRunning(int aX, int aY, int aZ) {
+        for(WaterFlood lFlood : fWaterFloods) {
+            if (lFlood.x == aX && lFlood.y == aY && lFlood.z == aZ) {
+                return true;
+            }
         }
+        return false;
+    }
+
+    private void readDynamicWorldConfig() {
+        FileConfiguration lConfig = getConfig();
+        configSyncBlockSetterTicks = lConfig.getInt("SyncBlockSetter.Ticks");
+        configWaterFloodTicks = lConfig.getInt("WaterFlood.Ticks");
     }
 }

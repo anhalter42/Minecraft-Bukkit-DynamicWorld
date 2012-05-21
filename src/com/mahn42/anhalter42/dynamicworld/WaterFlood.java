@@ -135,26 +135,18 @@ public class WaterFlood  implements Runnable {
                         break;
                 }
             }
+            /*
             Logger.getLogger("WaterFlood").info(new Integer(taskId) + " size = " + new Integer(fItems.size())
                     + " new = " + new Integer(lNewItems.size())
-                    + " all = " + new Integer(fAllItems.size()));
+                    + " all = " + new Integer(fAllItems.size()));*/
             fItems.clear();
             fItems = lNewItems;
             if (fItems.isEmpty() || fMaxBlocks <= 0) {
                 active = false;
                 fItems.clear();
                 fAllItems.clear();
-                plugin.getServer().getScheduler().cancelTask(taskId);
+                plugin.stopWaterFlood(this);
             }
-        }
-    }
-    
-    public boolean equals(Object aObject) {
-        if (aObject instanceof WaterFlood) {
-            WaterFlood lFlood =(WaterFlood) aObject;
-            return lFlood.x == x && lFlood.y == y && lFlood.z == z;
-        } else {
-            return false;
         }
     }
     

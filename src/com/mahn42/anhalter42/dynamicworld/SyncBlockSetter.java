@@ -50,7 +50,7 @@ public class SyncBlockSetter implements Runnable {
             if (!fItems.isEmpty()) {
                 ArrayList<SyncBlockSetterItem> lWorking = fItems;
                 fItems = new ArrayList<SyncBlockSetterItem>();
-                Logger.getLogger("SyncBlockSetter").info("count = " + new Integer(lWorking.size()) + " stat = " + new Integer(fCount));
+                //Logger.getLogger("SyncBlockSetter").info("count = " + new Integer(lWorking.size()) + " stat = " + new Integer(fCount));
                 while (!lWorking.isEmpty()) {
                     SyncBlockSetterItem lCurrent = lWorking.get(0);
                     lCurrent.execute();

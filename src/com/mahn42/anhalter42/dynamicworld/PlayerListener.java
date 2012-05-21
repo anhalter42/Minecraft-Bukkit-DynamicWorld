@@ -51,16 +51,20 @@ public class PlayerListener implements Listener {
             }
             if (event.hasItem() && (lInHand.equals(Material.BONE))) {
                 Block lBlock = event.getClickedBlock();
-                if (lBlock != null) { 
-                    WaterFlood lWaterFlood = plugin.createWaterFlood(lBlock.getX(), lBlock.getY(), lBlock.getZ());
-                    lWaterFlood.world = lWorld;
-                    if (lBlock.getLocation().add(0, 1, 0).getBlock().isLiquid()) {
-                        lWaterFlood.mode = WaterFlood.Mode.Unflood;
-                    } else {
-                        lWaterFlood.mode = WaterFlood.Mode.Flood;
+                if (lBlock != null) {
+                    if (!plugin.isWaterFloodRunning(lBlock.getX(), lBlock.getY(), lBlock.getZ())) {
+                        WaterFlood lWaterFlood = new WaterFlood(plugin);
+                        lWaterFlood.x = lBlock.getX();
+                        lWaterFlood.y = lBlock.getY();
+                        lWaterFlood.z = lBlock.getZ();
+                        lWaterFlood.world = lWorld;
+                        if (lBlock.getLocation().add(0, 1, 0).getBlock().isLiquid()) {
+                            lWaterFlood.mode = WaterFlood.Mode.Unfill;
+                        } else {
+                            lWaterFlood.mode = WaterFlood.Mode.Fill;
+                        }
+                        plugin.startWaterFlood(lWaterFlood);
                     }
-                    lWaterFlood.taskId = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, lWaterFlood, 2, 10);
-                    lWaterFlood.active = true;
                 }   
             }
         }
