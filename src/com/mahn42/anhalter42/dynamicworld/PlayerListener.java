@@ -62,22 +62,27 @@ public class PlayerListener implements Listener {
                         lFlood.y = lBlock.getY() + 1;
                         lFlood.z = lBlock.getZ();
                         lFlood.world = lWorld;
-                        lFlood.maxBlocks = 20;
+                        lFlood.maxBlocks = 40;
+                        lFlood.propagationDirection = FloodBlocks.getPropagationDirection(FloodBlocks.Direction.HorizontalAndDown);
                         lFlood.floodedMaterials.clear();
                         if (lBlock.getLocation().add(0, 1, 0).getBlock().isLiquid()) {
-                            lFlood.floodedMaterials.add(Material.getMaterial(8));
-                            lFlood.floodedMaterials.add(Material.getMaterial(9));
+                            lFlood.floodedMaterials.add(Material.WATER);
+                            lFlood.floodedMaterials.add(Material.STATIONARY_WATER);
+                            lFlood.floodedMaterials.add(Material.LAVA);
+                            lFlood.floodedMaterials.add(Material.STATIONARY_LAVA);
                             lFlood.floodMaterial = Material.AIR;
                             lFlood.updatePhysics = false;
                         } else {
                             lFlood.floodedMaterials.add(Material.AIR);
                             lFlood.floodedMaterials.add(Material.WATER_LILY);
-                            lFlood.floodedMaterials.add(Material.getMaterial(8));
-                            lFlood.floodedMaterials.add(Material.getMaterial(9));
-                            lFlood.floodedMaterials.add(Material.getMaterial(31));
+                            lFlood.floodedMaterials.add(Material.LAVA);
+                            lFlood.floodedMaterials.add(Material.STATIONARY_LAVA);
+                            lFlood.floodedMaterials.add(Material.WATER);
+                            lFlood.floodedMaterials.add(Material.STATIONARY_WATER);
+                            lFlood.floodedMaterials.add(Material.LONG_GRASS);
                             lFlood.floodedMaterials.add(Material.YELLOW_FLOWER);
                             lFlood.floodedMaterials.add(Material.RED_ROSE);
-                            lFlood.floodMaterial = Material.WATER;
+                            lFlood.floodMaterial = Material.STATIONARY_WATER;
                             lFlood.updatePhysics = true;
                         }
                         plugin.startFloodBlocks(lFlood);

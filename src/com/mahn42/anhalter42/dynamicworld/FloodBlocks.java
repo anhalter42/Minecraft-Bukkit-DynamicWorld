@@ -191,7 +191,8 @@ public class FloodBlocks implements Runnable {
                         lNew.x = lItem.x + lDelta.dx;
                         lNew.y = lItem.y + lDelta.dy;
                         lNew.z = lItem.z + lDelta.dz;
-                        if (!lNewItems.contains(lNew)
+                        if (lNew.y >= 0 && lNew.y <= world.getMaxHeight()
+                                && !lNewItems.contains(lNew)
                                 && !fItems.contains(lNew)
                                 && !fAllItems.contains(lNew)) {
                             lNewItems.add(lNew);

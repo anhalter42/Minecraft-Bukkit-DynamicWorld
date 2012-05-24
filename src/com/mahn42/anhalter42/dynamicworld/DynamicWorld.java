@@ -32,6 +32,11 @@ public class DynamicWorld extends JavaPlugin {
     public void onEnable() {
         readDynamicWorldConfig();
         /*
+        getLogger().info("8  = " + Material.getMaterial(8).name());
+        getLogger().info("9  = " + Material.getMaterial(9).name());
+        getLogger().info("31 = " + Material.getMaterial(31).name());
+        */
+        /*
         Plugin lPlugin = getServer().getPluginManager().getPlugin("MAHN42-Framework");
         if (lPlugin != null) {
             getLogger().info("found Framework");
