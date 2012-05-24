@@ -45,4 +45,4 @@ Nutzung
 -------
 
 Hat man eine Statue gebaut, so muss diese aktiviert werden.
-Dies wird durch Schlagen mit rechts Click mit einer Schaufel auf einen Block der Status erreicht.
+Dies wird durch Schlagen mit rechts Click mit einer Schaufel auf einen Block der Statue erreicht.
