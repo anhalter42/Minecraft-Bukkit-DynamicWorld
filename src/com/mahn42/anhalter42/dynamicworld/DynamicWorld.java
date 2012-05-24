@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -30,6 +31,12 @@ public class DynamicWorld extends JavaPlugin {
     @Override
     public void onEnable() {
         readDynamicWorldConfig();
+        /*
+        Plugin lPlugin = getServer().getPluginManager().getPlugin("MAHN42-Framework");
+        if (lPlugin != null) {
+            getLogger().info("found Framework");
+        }
+        */
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         fSyncBlockSetter = new SyncBlockSetter(this);
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fSyncBlockSetter, 10, configSyncBlockSetterTicks);
@@ -54,6 +61,28 @@ public class DynamicWorld extends JavaPlugin {
 
     boolean isWaterFloodRunning(int aX, int aY, int aZ) {
         for(WaterFlood lFlood : fWaterFloods) {
+            if (lFlood.x == aX && lFlood.y == aY && lFlood.z == aZ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected ArrayList<FloodBlocks> fFloodBlocks = new ArrayList<FloodBlocks>();
+    
+    public void startFloodBlocks(FloodBlocks aFlood) {
+        fFloodBlocks.add(aFlood);
+        aFlood.taskId = getServer().getScheduler().scheduleAsyncRepeatingTask(this, aFlood, 2, configWaterFloodTicks);
+        aFlood.active = true;
+    }
+    
+    public void stopFloodBlocks(FloodBlocks aFlood) {
+        fFloodBlocks.remove(aFlood);
+        getServer().getScheduler().cancelTask(aFlood.taskId);
+    }
+
+    boolean isFloodRunning(int aX, int aY, int aZ) {
+        for(FloodBlocks lFlood : fFloodBlocks) {
             if (lFlood.x == aX && lFlood.y == aY && lFlood.z == aZ) {
                 return true;
             }

@@ -4,6 +4,7 @@
  */
 package com.mahn42.anhalter42.dynamicworld;
 
+import java.util.HashSet;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -29,7 +30,10 @@ public class PlayerListener implements Listener {
     public void playerInteract(PlayerInteractEvent event) {
         Player lPlayer = event.getPlayer();
         World lWorld = lPlayer.getWorld();
-        Material lInHand = event.getItem().getType();
+        Material lInHand = null;
+        if (event.hasItem()) {
+          lInHand = event.getItem().getType();
+        }
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             if (event.hasItem() && (lInHand.equals(Material.APPLE) || lInHand.equals(Material.BOOK))) {
                 Block lBlock = event.getClickedBlock();
@@ -52,6 +56,33 @@ public class PlayerListener implements Listener {
             if (event.hasItem() && (lInHand.equals(Material.BONE))) {
                 Block lBlock = event.getClickedBlock();
                 if (lBlock != null) {
+                    if (!plugin.isFloodRunning(lBlock.getX(), lBlock.getY(), lBlock.getZ())) {
+                        FloodBlocks lFlood = new FloodBlocks(plugin);
+                        lFlood.x = lBlock.getX();
+                        lFlood.y = lBlock.getY() + 1;
+                        lFlood.z = lBlock.getZ();
+                        lFlood.world = lWorld;
+                        lFlood.maxBlocks = 20;
+                        lFlood.floodedMaterials.clear();
+                        if (lBlock.getLocation().add(0, 1, 0).getBlock().isLiquid()) {
+                            lFlood.floodedMaterials.add(Material.getMaterial(8));
+                            lFlood.floodedMaterials.add(Material.getMaterial(9));
+                            lFlood.floodMaterial = Material.AIR;
+                            lFlood.updatePhysics = false;
+                        } else {
+                            lFlood.floodedMaterials.add(Material.AIR);
+                            lFlood.floodedMaterials.add(Material.WATER_LILY);
+                            lFlood.floodedMaterials.add(Material.getMaterial(8));
+                            lFlood.floodedMaterials.add(Material.getMaterial(9));
+                            lFlood.floodedMaterials.add(Material.getMaterial(31));
+                            lFlood.floodedMaterials.add(Material.YELLOW_FLOWER);
+                            lFlood.floodedMaterials.add(Material.RED_ROSE);
+                            lFlood.floodMaterial = Material.WATER;
+                            lFlood.updatePhysics = true;
+                        }
+                        plugin.startFloodBlocks(lFlood);
+                    }
+                    /*
                     if (!plugin.isWaterFloodRunning(lBlock.getX(), lBlock.getY(), lBlock.getZ())) {
                         WaterFlood lWaterFlood = new WaterFlood(plugin);
                         lWaterFlood.x = lBlock.getX();
@@ -65,6 +96,7 @@ public class PlayerListener implements Listener {
                         }
                         plugin.startWaterFlood(lWaterFlood);
                     }
+                    */
                 }   
             }
         }
