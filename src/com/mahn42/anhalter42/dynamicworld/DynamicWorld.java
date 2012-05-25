@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -31,17 +30,6 @@ public class DynamicWorld extends JavaPlugin {
     @Override
     public void onEnable() {
         readDynamicWorldConfig();
-        /*
-        getLogger().info("8  = " + Material.getMaterial(8).name());
-        getLogger().info("9  = " + Material.getMaterial(9).name());
-        getLogger().info("31 = " + Material.getMaterial(31).name());
-        */
-        /*
-        Plugin lPlugin = getServer().getPluginManager().getPlugin("MAHN42-Framework");
-        if (lPlugin != null) {
-            getLogger().info("found Framework");
-        }
-        */
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         fSyncBlockSetter = new SyncBlockSetter(this);
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fSyncBlockSetter, 10, configSyncBlockSetterTicks);
@@ -51,28 +39,6 @@ public class DynamicWorld extends JavaPlugin {
         fSyncBlockSetter.setTypeAndData(aLocation, aMaterial, aData, aPhysics);
     }
     
-    protected ArrayList<WaterFlood> fWaterFloods = new ArrayList<WaterFlood>();
-    
-    public void startWaterFlood(WaterFlood aFlood) {
-        fWaterFloods.add(aFlood);
-        aFlood.taskId = getServer().getScheduler().scheduleAsyncRepeatingTask(this, aFlood, 2, configWaterFloodTicks);
-        aFlood.active = true;
-    }
-    
-    public void stopWaterFlood(WaterFlood aFlood) {
-        fWaterFloods.remove(aFlood);
-        getServer().getScheduler().cancelTask(aFlood.taskId);
-    }
-
-    boolean isWaterFloodRunning(int aX, int aY, int aZ) {
-        for(WaterFlood lFlood : fWaterFloods) {
-            if (lFlood.x == aX && lFlood.y == aY && lFlood.z == aZ) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     protected ArrayList<FloodBlocks> fFloodBlocks = new ArrayList<FloodBlocks>();
     
     public void startFloodBlocks(FloodBlocks aFlood) {
