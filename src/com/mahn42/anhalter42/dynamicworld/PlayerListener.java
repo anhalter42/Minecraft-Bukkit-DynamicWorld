@@ -4,6 +4,7 @@
  */
 package com.mahn42.anhalter42.dynamicworld;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -26,6 +27,8 @@ public class PlayerListener implements Listener {
         plugin = aPlugin;
     }
     
+    protected FloodBlocks fLastFlood = null;
+    
     @EventHandler
     public void playerInteract(PlayerInteractEvent event) {
         Player lPlayer = event.getPlayer();
@@ -35,7 +38,7 @@ public class PlayerListener implements Listener {
           lInHand = event.getItem().getType();
         }
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            if (event.hasItem() && (lInHand.equals(Material.APPLE) || lInHand.equals(Material.BOOK))) {
+            if (event.hasItem() && (lInHand.equals(Material.DIAMOND_AXE) || lInHand.equals(Material.DIAMOND_PICKAXE))) {
                 Block lBlock = event.getClickedBlock();
                 if (lBlock != null) { 
                     LandSlip lLandSlip = new LandSlip(plugin);
@@ -43,7 +46,7 @@ public class PlayerListener implements Listener {
                     lLandSlip.x = lBlock.getX();
                     lLandSlip.z = lBlock.getZ();
                     lLandSlip.radius = 5;
-                    if (lInHand.equals(Material.APPLE)) {
+                    if (lInHand.equals(Material.DIAMOND_AXE)) {
                         lLandSlip.mode = LandSlip.Mode.Down;
                     } else {
                         lLandSlip.mode = LandSlip.Mode.Up;
@@ -53,7 +56,7 @@ public class PlayerListener implements Listener {
                     lLandSlip.active = true;
                 }   
             }
-            if (event.hasItem() && (lInHand.equals(Material.BONE))) {
+            if (event.hasItem() && lInHand.equals(Material.BONE)) {
                 Block lBlock = event.getClickedBlock();
                 if (lBlock != null) {
                     if (!plugin.isFloodRunning(lBlock.getX(), lBlock.getY(), lBlock.getZ())) {
@@ -62,8 +65,9 @@ public class PlayerListener implements Listener {
                         lFlood.y = lBlock.getY() + 1;
                         lFlood.z = lBlock.getZ();
                         lFlood.world = lWorld;
-                        lFlood.maxBlocks = 40;
+                        lFlood.maxBlocks = 100;
                         lFlood.propagationDirection = FloodBlocks.getPropagationDirection(FloodBlocks.Direction.HorizontalAndDown);
+                        lFlood.floodedBlocks = new ArrayList<FloodBlocks.FloodedBlock>();
                         lFlood.floodedMaterials.clear();
                         if (lBlock.getLocation().add(0, 1, 0).getBlock().isLiquid()) {
                             lFlood.floodedMaterials.add(Material.WATER);
@@ -83,27 +87,21 @@ public class PlayerListener implements Listener {
                             lFlood.floodedMaterials.add(Material.YELLOW_FLOWER);
                             lFlood.floodedMaterials.add(Material.RED_ROSE);
                             lFlood.floodMaterial = Material.STATIONARY_WATER;
-                            lFlood.updatePhysics = true;
+                            lFlood.updatePhysics = false;
                         }
+                        fLastFlood = lFlood;
                         plugin.startFloodBlocks(lFlood);
                     }
-                    /*
-                    if (!plugin.isWaterFloodRunning(lBlock.getX(), lBlock.getY(), lBlock.getZ())) {
-                        WaterFlood lWaterFlood = new WaterFlood(plugin);
-                        lWaterFlood.x = lBlock.getX();
-                        lWaterFlood.y = lBlock.getY();
-                        lWaterFlood.z = lBlock.getZ();
-                        lWaterFlood.world = lWorld;
-                        if (lBlock.getLocation().add(0, 1, 0).getBlock().isLiquid()) {
-                            lWaterFlood.mode = WaterFlood.Mode.Unfill;
-                        } else {
-                            lWaterFlood.mode = WaterFlood.Mode.Fill;
-                        }
-                        plugin.startWaterFlood(lWaterFlood);
-                    }
-                    */
                 }   
-            }
+            } else if (event.hasItem() && lInHand.equals(Material.DIAMOND_SWORD) && fLastFlood != null) {
+                Block lBlock = event.getClickedBlock();
+                if (lBlock != null) {
+                    fLastFlood.mode = FloodBlocks.Mode.Reverse;
+                    fLastFlood.updatePhysics = false;
+                    plugin.startFloodBlocks(fLastFlood);
+                    fLastFlood = null;
+                }
+            }                
         }
     }
 }

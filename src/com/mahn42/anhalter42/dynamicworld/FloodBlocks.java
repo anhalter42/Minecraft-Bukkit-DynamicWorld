@@ -6,8 +6,8 @@ package com.mahn42.anhalter42.dynamicworld;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.logging.Logger;
 import org.bukkit.Material;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
@@ -17,6 +17,11 @@ import org.bukkit.block.Block;
  */
 public class FloodBlocks implements Runnable {
 
+    public enum Mode {
+        Flood,
+        Reverse
+    }
+    
     public enum Direction {
         HorizontalAndDown,
         Horizontal,
@@ -32,6 +37,7 @@ public class FloodBlocks implements Runnable {
     public int taskId;
     public boolean updatePhysics = true;
     public int maxBlocks = 10000;
+    public Mode mode = Mode.Flood;
     public HashSet<Material> floodedMaterials = new HashSet<Material>();
     public Material floodMaterial;
     public Delta[] propagationDirection;
@@ -49,6 +55,11 @@ public class FloodBlocks implements Runnable {
         public int x,y,z;
         public int typeId;
         public byte data;
+        
+        @Override
+        public String toString() {
+            return "(" + new Integer(x) + "," + new Integer(y) + "," + new Integer(z) + ")[" + new Integer(typeId) + "," + new Integer(data) + "]";
+        }
     }
 
     protected class FloodItem {
@@ -144,20 +155,27 @@ public class FloodBlocks implements Runnable {
 
     protected void init() {
         if (!fInit) {
-            FloodItem lItem = new FloodItem();
-            lItem.x = x;
-            lItem.y = y;
-            lItem.z = z;
-            fItems.add(lItem);
-            fSettedItemsCount = 0;
-            if (floodedMaterials.isEmpty()) {
-                floodedMaterials.add(Material.AIR);
-            }
-            if (floodMaterial == null) {
-                floodMaterial = Material.AIR;
-            }
-            if (propagationDirection == null) {
-                propagationDirection = getPropagationDirection(Direction.HorizontalAndDown);
+            switch(mode) {
+                case Flood:
+                    FloodItem lItem = new FloodItem();
+                    lItem.x = x;
+                    lItem.y = y;
+                    lItem.z = z;
+                    fItems.add(lItem);
+                    fSettedItemsCount = 0;
+                    if (floodedMaterials.isEmpty()) {
+                        floodedMaterials.add(Material.AIR);
+                    }
+                    if (floodMaterial == null) {
+                        floodMaterial = Material.AIR;
+                    }
+                    if (propagationDirection == null) {
+                        propagationDirection = getPropagationDirection(Direction.HorizontalAndDown);
+                    }
+                    break;
+                case Reverse:
+                    fSettedItemsCount = 0;
+                    break;
             }
             fInit = true;
         }
@@ -167,47 +185,78 @@ public class FloodBlocks implements Runnable {
     public void run() {
         if (active) {
             init();
-            fAllItems.addAll(fItems);
-            ArrayList<FloodItem> lNewItems = new ArrayList<FloodItem>();
-            for(FloodItem lItem : fItems) {
-                Block lBlock = world.getBlockAt(lItem.x, lItem.y, lItem.z);
-                Material lMat = lBlock.getType();
-                if (floodedMaterials.contains(lMat)) {
-                    if (!lMat.equals(floodMaterial)) {
-                        if (floodedBlocks != null) {
-                            FloodedBlock lFBlock = new FloodedBlock();
-                            lFBlock.x = lBlock.getX();
-                            lFBlock.x = lBlock.getY();
-                            lFBlock.y = lBlock.getZ();
-                            lFBlock.typeId = lBlock.getTypeId();
-                            lFBlock.data = lBlock.getData();
-                            floodedBlocks.add(lFBlock);
-                        }
-                        plugin.setTypeAndData(lBlock.getLocation(), floodMaterial, (byte)0, updatePhysics);
-                        fSettedItemsCount++;
+            switch(mode) {
+                case Flood:
+                    flood();
+                    break;
+                case Reverse:
+                    reverse();
+                    break;
+            }
+        }
+    }
+    
+    protected void flood() {
+        fAllItems.addAll(fItems);
+        ArrayList<FloodItem> lNewItems = new ArrayList<FloodItem>();
+        for(FloodItem lItem : fItems) {
+            Block lBlock = world.getBlockAt(lItem.x, lItem.y, lItem.z);
+            Material lMat = lBlock.getType();
+            if (floodedMaterials.contains(lMat)) {
+                if (!lMat.equals(floodMaterial)) {
+                    if (floodedBlocks != null) {
+                        FloodedBlock lFBlock = new FloodedBlock();
+                        lFBlock.x = lBlock.getX();
+                        lFBlock.y = lBlock.getY();
+                        lFBlock.z = lBlock.getZ();
+                        lFBlock.typeId = lBlock.getTypeId();
+                        lFBlock.data = lBlock.getData();
+                        floodedBlocks.add(lFBlock);
                     }
-                    for(Delta lDelta : propagationDirection) {
-                        FloodItem lNew = new FloodItem();
-                        lNew.x = lItem.x + lDelta.dx;
-                        lNew.y = lItem.y + lDelta.dy;
-                        lNew.z = lItem.z + lDelta.dz;
-                        if (lNew.y >= 0 && lNew.y <= world.getMaxHeight()
-                                && !lNewItems.contains(lNew)
-                                && !fItems.contains(lNew)
-                                && !fAllItems.contains(lNew)) {
-                            lNewItems.add(lNew);
-                        }
+                    plugin.setTypeAndData(lBlock.getLocation(), floodMaterial, (byte)0, updatePhysics);
+                    fSettedItemsCount++;
+                }
+                for(Delta lDelta : propagationDirection) {
+                    FloodItem lNew = new FloodItem();
+                    lNew.x = lItem.x + lDelta.dx;
+                    lNew.y = lItem.y + lDelta.dy;
+                    lNew.z = lItem.z + lDelta.dz;
+                    if (lNew.y >= 0 && lNew.y <= world.getMaxHeight()
+                            && !lNewItems.contains(lNew)
+                            && !fItems.contains(lNew)
+                            && !fAllItems.contains(lNew)) {
+                        lNewItems.add(lNew);
                     }
                 }
             }
+        }
+        fItems.clear();
+        fItems = lNewItems;
+        if (fItems.isEmpty() || fSettedItemsCount > maxBlocks) {
+            active = false;
+            fInit = false;
             fItems.clear();
-            fItems = lNewItems;
-            if (fItems.isEmpty() || fSettedItemsCount > maxBlocks) {
-                active = false;
-                fItems.clear();
-                fAllItems.clear();
-                plugin.stopFloodBlocks(this);
+            fAllItems.clear();
+            plugin.stopFloodBlocks(this);
+        }
+    }
+    
+    protected int fReverseBlocksInStep = 10;
+    
+    protected void reverse() {
+        int lCount = fReverseBlocksInStep;
+        if (floodedBlocks != null) {
+            while (fSettedItemsCount < floodedBlocks.size() && lCount >= 0) {
+                FloodedBlock lBlock = floodedBlocks.get(fSettedItemsCount);
+                plugin.setTypeAndData(new Location(world, (double)lBlock.x, lBlock.y, lBlock.z), Material.getMaterial(lBlock.typeId), lBlock.data, updatePhysics);
+                fSettedItemsCount++;
+                lCount--;
             }
+        }
+        if (floodedBlocks == null || fSettedItemsCount >= floodedBlocks.size()) {
+            active = false;
+            fInit = false;
+            plugin.stopFloodBlocks(this);
         }
     }
     
