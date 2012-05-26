@@ -5,7 +5,6 @@
 package com.mahn42.anhalter42.dynamicworld;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -38,7 +37,7 @@ public class PlayerListener implements Listener {
           lInHand = event.getItem().getType();
         }
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            if (event.hasItem() && (lInHand.equals(Material.DIAMOND_AXE) || lInHand.equals(Material.DIAMOND_PICKAXE))) {
+            if (event.hasItem() && (lInHand.equals(Material.DIAMOND_PICKAXE) || lInHand.equals(Material.DIAMOND_AXE))) {
                 Block lBlock = event.getClickedBlock();
                 if (lBlock != null) { 
                     LandSlip lLandSlip = new LandSlip(plugin);
@@ -101,7 +100,17 @@ public class PlayerListener implements Listener {
                     plugin.startFloodBlocks(fLastFlood);
                     fLastFlood = null;
                 }
-            }                
+            } else if (event.hasItem() && lInHand.equals(Material.BOOK)) {
+                Block lBlock = event.getClickedBlock();
+                if (lBlock != null) { 
+                    BuildingDescription lBuilding = plugin.detectBuilding(lWorld, lBlock.getLocation());
+                    if (lBuilding != null) {
+                        lPlayer.sendMessage("building " + lBuilding.name + " found.");
+                    } else {
+                        lPlayer.sendMessage("no building found.");
+                    }
+                }
+            }
         }
     }
 }
