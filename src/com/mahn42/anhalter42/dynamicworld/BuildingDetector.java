@@ -6,9 +6,7 @@ package com.mahn42.anhalter42.dynamicworld;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
-import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.util.Vector;
 
 /**
  *
@@ -21,7 +19,9 @@ public class BuildingDetector {
         fDescriptions = new ArrayList<BuildingDescription>();
     }
     
-    public BuildingDescription detect(World aWorld, BlockPosition aPos1, BlockPosition aPos2) {
+    public ArrayList<Building> detect(World aWorld, BlockPosition aPos1, BlockPosition aPos2) {
+        //TODO sort desc with most related to first scan
+        ArrayList<Building> lResult = new ArrayList<Building>();
         int dx = aPos1.x > aPos2.x ? -1 : 1;
         int dy = aPos1.y > aPos2.y ? -1 : 1;
         int dz = aPos1.z > aPos2.z ? -1 : 1;
@@ -33,17 +33,18 @@ public class BuildingDetector {
                 for(int lY = aPos1.y; lY <= aPos2.y; lY+=dy) {
                     for(int lZ = aPos1.z; lZ <= aPos2.z; lZ+=dz) {
                         //Logger.getLogger("detect").info("teste " + new Integer(lX) + "," + new Integer(lY) + "," + new Integer(lZ));
-                        if (matchDescription(lDesc, aWorld, lX, lY, lZ)) {
-                            return lDesc;
+                        Building aBuilding = matchDescription(lDesc, aWorld, lX, lY, lZ);
+                        if (aBuilding != null) {
+                            lResult.add(aBuilding);
                         }
                     }
                 }
             }
         }
-        return null;
+        return lResult;
     }
 
-    private boolean matchDescription(BuildingDescription lDesc, World aWorld, int lX, int lY, int lZ) {
+    private Building matchDescription(BuildingDescription lDesc, World aWorld, int lX, int lY, int lZ) {
         return lDesc.matchDescription(aWorld, lX, lY, lZ);
     }
 

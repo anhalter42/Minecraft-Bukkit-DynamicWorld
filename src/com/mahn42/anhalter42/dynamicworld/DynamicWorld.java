@@ -4,7 +4,9 @@
  */
 package com.mahn42.anhalter42.dynamicworld;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -18,6 +20,8 @@ import org.bukkit.util.Vector;
  */
 public class DynamicWorld extends JavaPlugin {
 
+    public static DynamicWorld plugin;
+    
     public int configSyncBlockSetterTicks = 2;
     public int configWaterFloodTicks = 10;
     
@@ -32,6 +36,7 @@ public class DynamicWorld extends JavaPlugin {
     
     @Override
     public void onEnable() {
+        plugin = this;
         readDynamicWorldConfig();
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         fSyncBlockSetter = new SyncBlockSetter(this);
@@ -43,10 +48,23 @@ public class DynamicWorld extends JavaPlugin {
         lDesc = fBuildingDetector.newDescription("Statue.Watergod.1");
         lBDesc = lDesc.newBlockDescription("Water");
         lBDesc.material = Material.STATIONARY_WATER;
-        lBDesc.newRelatedTo(new Vector(0, -6, 0), "AirUnderWater");
+        lBDesc.newRelatedTo(new Vector(  0, -6,  0), "AirUnderWater");
+        lBDesc.newRelatedTo(new Vector( -9,  0,  0), "AirX1Water");
+        lBDesc.newRelatedTo(new Vector(  9,  0,  0), "AirX2Water");
+        lBDesc.newRelatedTo(new Vector(  0,  0, -9), "AirZ1Water");
+        lBDesc.newRelatedTo(new Vector(  0,  0,  9), "AirZ2Water");
         lBDesc = lDesc.newBlockDescription("AirUnderWater");
         lBDesc.material = Material.AIR;
+        lBDesc = lDesc.newBlockDescription("AirX1Water");
+        lBDesc.material = Material.AIR;
+        lBDesc = lDesc.newBlockDescription("AirX2Water");
+        lBDesc.material = Material.AIR;
+        lBDesc = lDesc.newBlockDescription("AirZ1Water");
+        lBDesc.material = Material.AIR;
+        lBDesc = lDesc.newBlockDescription("AirZ2Water");
+        lBDesc.material = Material.AIR;
         lDesc.activate();
+        
         lDesc = fBuildingDetector.newDescription("Statue.Firegod.1");
         lBDesc = lDesc.newBlockDescription("Lava");
         lBDesc.material = Material.STATIONARY_LAVA;
@@ -54,6 +72,7 @@ public class DynamicWorld extends JavaPlugin {
         lBDesc = lDesc.newBlockDescription("AirUnderLava");
         lBDesc.material = Material.AIR;
         lDesc.activate();
+        
         lDesc = fBuildingDetector.newDescription("Statue.Firegod.2");
         lBDesc = lDesc.newBlockDescription("Fire");
         lBDesc.material = Material.FIRE;
@@ -61,6 +80,7 @@ public class DynamicWorld extends JavaPlugin {
         lBDesc = lDesc.newBlockDescription("NetherUnderFire");
         lBDesc.material = Material.NETHERRACK;
         lDesc.activate();
+        
         lDesc = fBuildingDetector.newDescription("Statue.Firegod.3");
         lBDesc = lDesc.newBlockDescription("Glow");
         lBDesc.material = Material.GLOWSTONE;
@@ -102,7 +122,44 @@ public class DynamicWorld extends JavaPlugin {
         configWaterFloodTicks = lConfig.getInt("WaterFlood.Ticks");
     }
     
-    public BuildingDescription detectBuilding(World aWorld, Location aLocation) {
-        return fBuildingDetector.detect(aWorld, new BlockPosition(aLocation.add(-5, -5, -5)), new BlockPosition(aLocation.add(5, 5, 5)));
+    public ArrayList<Building> detectBuilding(World aWorld, Location aLocation) {
+        BlockPosition aPos1 = new BlockPosition(aLocation);
+        BlockPosition aPos2 = new BlockPosition(aLocation);
+        aPos1.add(-5,-5,-5);
+        aPos2.add( 5, 5, 5);
+        return fBuildingDetector.detect(aWorld, aPos1, aPos2);
+    }
+    
+    public BuildingDescription getBuildingDescription(String aName) {
+        for(BuildingDescription lDesc : fBuildingDetector.fDescriptions) {
+            if (aName.equalsIgnoreCase(lDesc.name)) {
+                return lDesc;
+            }
+        }
+        return null;
+    }
+
+    protected HashMap<String, BuildingDB> fBuildingDBs;
+    
+    public BuildingDB getBuildingDB(String aWorldName) {
+        if (fBuildingDBs == null) {
+            fBuildingDBs = new HashMap<String, BuildingDB>();
+        }
+        if (!fBuildingDBs.containsKey(aWorldName)) {
+            World lWorld = getServer().getWorld(aWorldName);
+            File lFolder = getDataFolder();
+            //File lFolder = lWorld.getWorldFolder();
+            if (!lFolder.exists()) {
+                lFolder.mkdirs();
+            }
+            String lPath = lFolder.getPath();
+            lPath = lPath + File.separatorChar + aWorldName + "_building.csv";
+            File lFile = new File(lPath);
+            BuildingDB lDB = new BuildingDB(lWorld, lFile);
+            lDB.load();
+            getLogger().info("Datafile " + lFile.toString() + " loaded. (Records:" + new Integer(lDB.size()).toString() + ")");
+            fBuildingDBs.put(aWorldName, lDB);
+        }
+        return fBuildingDBs.get(aWorldName);
     }
 }

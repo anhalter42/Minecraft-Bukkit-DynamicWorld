@@ -103,9 +103,13 @@ public class PlayerListener implements Listener {
             } else if (event.hasItem() && lInHand.equals(Material.BOOK)) {
                 Block lBlock = event.getClickedBlock();
                 if (lBlock != null) { 
-                    BuildingDescription lBuilding = plugin.detectBuilding(lWorld, lBlock.getLocation());
-                    if (lBuilding != null) {
-                        lPlayer.sendMessage("building " + lBuilding.name + " found.");
+                    ArrayList<Building> lBuildings = plugin.detectBuilding(lWorld, lBlock.getLocation());
+                    if (!lBuildings.isEmpty()) {
+                        for(Building lBuilding : lBuildings) {
+                            lBuilding.playerName = lPlayer.getName();
+                            lPlayer.sendMessage("building " + lBuilding.getName() + " found.");
+                            plugin.getLogger().info(lBuilding.toCSV());
+                        }
                     } else {
                         lPlayer.sendMessage("no building found.");
                     }

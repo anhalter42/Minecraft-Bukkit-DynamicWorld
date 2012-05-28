@@ -99,4 +99,10 @@ public class BlockPosition {
     public Material getBlockType(World aWorld) {
         return getBlock(aWorld).getType();
     }
+
+    void add(int aX, int aY, int aZ) {
+        x += aX;
+        y += aY;
+        z += aZ;
+    }
 }
