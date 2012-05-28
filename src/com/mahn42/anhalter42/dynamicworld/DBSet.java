@@ -92,6 +92,7 @@ public class DBSet<T extends DBRecord> implements Iterable<T> {
         if (aRecord != null) {
             fRecords.add(aRecord);
             fKeyIndex.put(aRecord.key, aRecord);
+            aRecord.added(this);
         }
     }
     

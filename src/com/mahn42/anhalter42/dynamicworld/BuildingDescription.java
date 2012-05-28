@@ -60,6 +60,7 @@ public class BuildingDescription {
     public Position position = Position.onGround;
     public ArrayList<BlockDescription> blocks = new ArrayList<BlockDescription>();
     public boolean active;
+    public double influenceRadiusFactor = 0;
     
     public BuildingDescription() {
     }
@@ -105,6 +106,7 @@ public class BuildingDescription {
                 lExcludes.clear();
                 Building aBuilding = new Building();
                 aBuilding.description = this;
+                aBuilding.setWorld(aWorld);
                 //Logger.getLogger("detect").info("mat " + lMat.name());
                 if (!canFollowRelateds(lExcludes, aBuilding, aWorld, lBlockDesc, lX, lY, lZ)) {
                     Logger.getLogger("detect").info("not ok");

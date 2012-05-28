@@ -154,4 +154,8 @@ public class DBRecord {
             }
         }
     }
+    
+    protected void added(DBSet aSet) {
+        
+    }
 }

@@ -45,7 +45,8 @@ public class DynamicWorld extends JavaPlugin {
         BuildingDescription lDesc;
         BuildingDescription.BlockDescription lBDesc;
 
-        lDesc = fBuildingDetector.newDescription("Statue.Watergod.1");
+        lDesc = fBuildingDetector.newDescription("Statue.Watergod.Waterpod.1");
+        lDesc.influenceRadiusFactor = 10;
         lBDesc = lDesc.newBlockDescription("Water");
         lBDesc.material = Material.STATIONARY_WATER;
         lBDesc.newRelatedTo(new Vector(  0, -6,  0), "AirUnderWater");
@@ -65,15 +66,29 @@ public class DynamicWorld extends JavaPlugin {
         lBDesc.material = Material.AIR;
         lDesc.activate();
         
-        lDesc = fBuildingDetector.newDescription("Statue.Firegod.1");
+        lDesc = fBuildingDetector.newDescription("Statue.Firegod.Lavapod.1");
+        lDesc.influenceRadiusFactor = 10;
         lBDesc = lDesc.newBlockDescription("Lava");
         lBDesc.material = Material.STATIONARY_LAVA;
         lBDesc.newRelatedTo(new Vector(0, -6, 0), "AirUnderLava");
+        lBDesc.newRelatedTo(new Vector( -9,  0,  0), "AirX1Lava");
+        lBDesc.newRelatedTo(new Vector(  9,  0,  0), "AirX2Lava");
+        lBDesc.newRelatedTo(new Vector(  0,  0, -9), "AirZ1Lava");
+        lBDesc.newRelatedTo(new Vector(  0,  0,  9), "AirZ2Lava");
         lBDesc = lDesc.newBlockDescription("AirUnderLava");
+        lBDesc.material = Material.AIR;
+        lBDesc = lDesc.newBlockDescription("AirX1Lava");
+        lBDesc.material = Material.AIR;
+        lBDesc = lDesc.newBlockDescription("AirX2Lava");
+        lBDesc.material = Material.AIR;
+        lBDesc = lDesc.newBlockDescription("AirZ1Lava");
+        lBDesc.material = Material.AIR;
+        lBDesc = lDesc.newBlockDescription("AirZ2Lava");
         lBDesc.material = Material.AIR;
         lDesc.activate();
         
-        lDesc = fBuildingDetector.newDescription("Statue.Firegod.2");
+        lDesc = fBuildingDetector.newDescription("Statue.Firegod.Nether.1");
+        lDesc.influenceRadiusFactor = 2;
         lBDesc = lDesc.newBlockDescription("Fire");
         lBDesc.material = Material.FIRE;
         lBDesc.newRelatedTo(new Vector(0, -1, 0), "NetherUnderFire");
@@ -81,12 +96,24 @@ public class DynamicWorld extends JavaPlugin {
         lBDesc.material = Material.NETHERRACK;
         lDesc.activate();
         
-        lDesc = fBuildingDetector.newDescription("Statue.Firegod.3");
+        lDesc = fBuildingDetector.newDescription("Statue.Firegod.Glow.1");
+        lDesc.influenceRadiusFactor = 10;
         lBDesc = lDesc.newBlockDescription("Glow");
         lBDesc.material = Material.GLOWSTONE;
         lBDesc.newRelatedTo(new Vector(0, -1, 0), "StoneUnderGlow");
         lBDesc = lDesc.newBlockDescription("StoneUnderGlow");
         lBDesc.material = Material.STONE;
+        lDesc.activate();
+
+        lDesc = fBuildingDetector.newDescription("Sewer.Pump.1");
+        lBDesc = lDesc.newBlockDescription("WaterOut");
+        lBDesc.material = Material.LAPIS_BLOCK;
+        lBDesc.newRelatedTo(new Vector(0, 5, 0), "WaterIn");
+        lBDesc.newRelatedTo(new Vector(0, 1, 0), "RedStoneWire");
+        lBDesc = lDesc.newBlockDescription("WaterIn");
+        lBDesc.material = Material.LAPIS_BLOCK;
+        lBDesc = lDesc.newBlockDescription("RedStoneWire");
+        lBDesc.material = Material.REDSTONE_WIRE;
         lDesc.activate();
     }
 

@@ -5,6 +5,7 @@
 package com.mahn42.anhalter42.dynamicworld;
 
 import java.util.ArrayList;
+import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 /**
@@ -17,10 +18,16 @@ public class Building extends DBRecord {
     public BuildingDescription description;
     public BlockPosition edge1 = new BlockPosition();
     public BlockPosition edge2 = new BlockPosition();
+    public int maxHeight = 0;
+    public int influenceRadius = 0;
     public ArrayList<BuildingBlock> blocks = new ArrayList<BuildingBlock>();
 
     public String getName() {
         return name == null ? description.name + "(" + playerName + ")" : name;
+    }
+    
+    public void setWorld(World aWorld) {
+        fWorld = aWorld;
     }
     
     @Override
@@ -84,8 +91,34 @@ public class Building extends DBRecord {
             edge2.y = Math.max(edge2.y, lBlock.position.y);
             edge2.z = Math.max(edge2.z, lBlock.position.z);
         }
+        if (fWorld != null) {
+            maxHeight = 0;
+            for(int lX = edge1.x; lX <= edge2.x; lX++) {
+                for(int lZ = edge1.z; lZ <= edge2.z; lZ++) {
+                    int lHeight = fWorld.getHighestBlockYAt(lX, lZ);
+                    if (lHeight > maxHeight) {
+                        maxHeight = lHeight;
+                    }
+                }
+            }
+            if (description.position == BuildingDescription.Position.onGround) {
+                edge2.y = maxHeight;
+            }
+        }
+        influenceRadius = (int) Math.round(description.influenceRadiusFactor * (edge2.y - edge1.y));
     }
     
+    protected World fWorld;
+    
+    @Override
+    protected void added(DBSet aSet) {
+        super.added(aSet);
+        if (aSet instanceof BuildingDB) {
+            fWorld = ((BuildingDB)aSet).fWorld;
+        }
+        update();
+    }
+
     public boolean isInside(BlockPosition aPos) {
         return aPos.x >= edge1.x && aPos.x <= edge2.x
             && aPos.y >= edge1.y && aPos.y <= edge2.y

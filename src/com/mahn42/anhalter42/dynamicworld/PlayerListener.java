@@ -107,7 +107,9 @@ public class PlayerListener implements Listener {
                     if (!lBuildings.isEmpty()) {
                         for(Building lBuilding : lBuildings) {
                             lBuilding.playerName = lPlayer.getName();
-                            lPlayer.sendMessage("building " + lBuilding.getName() + " found.");
+                            lPlayer.sendMessage("building " + lBuilding.getName()
+                                    + " found. ir = " + new Integer(lBuilding.influenceRadius)
+                                    + " maxh = " + new Integer(lBuilding.maxHeight));
                             plugin.getLogger().info(lBuilding.toCSV());
                         }
                     } else {
