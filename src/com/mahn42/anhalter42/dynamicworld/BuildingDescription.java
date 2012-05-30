@@ -24,7 +24,7 @@ public class BuildingDescription {
     
     public class RelatedTo {
         Vector direction;
-        RelatedPosition position;
+        RelatedPosition position = RelatedPosition.Vector;
         String block;
         BlockDescription description;
         
@@ -114,6 +114,9 @@ public class BuildingDescription {
         for(BlockDescription lBDesc : blocks) {
             for(RelatedTo lRel : lBDesc.relatedTo) {
                 lRel.description = lHash.get(lRel.block);
+                if (lRel.description == null) {
+                    DynamicWorld.plugin.getLogger().info("block description " + lRel.block + " of building description '" + name + "'");
+                }
             }
         }
         active = true;

@@ -32,6 +32,8 @@ public class DynamicWorld extends JavaPlugin {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        Material lMat = Material.getMaterial("IRON_BLOCK");
+        System.out.println(lMat);
     }
     
     @Override
@@ -131,6 +133,7 @@ public class DynamicWorld extends JavaPlugin {
         lBDesc.newRelatedTo(new Vector(0,-10, 0), "DoorHingeRightBottom");
         lBDesc = lDesc.newBlockDescription("DoorHingeRightBottom");
         lBDesc.material = Material.IRON_BLOCK;
+        lDesc.activate();
 
         lDesc = fBuildingDetector.newDescription("Sewer.Door.Z");
         lBDesc = lDesc.newBlockDescription("DoorHingeLeftTop");
@@ -144,6 +147,7 @@ public class DynamicWorld extends JavaPlugin {
         lBDesc.newRelatedTo(new Vector(0,-10, 0), "DoorHingeRightBottom");
         lBDesc = lDesc.newBlockDescription("DoorHingeRightBottom");
         lBDesc.material = Material.IRON_BLOCK;
+        lDesc.activate();
 
     }
 
