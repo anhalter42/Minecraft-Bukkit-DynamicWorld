@@ -17,8 +17,14 @@ import org.bukkit.util.Vector;
  */
 public class BuildingDescription {
 
+    public enum RelatedPosition {
+        Vector,
+        Nearby
+    }
+    
     public class RelatedTo {
         Vector direction;
+        RelatedPosition position;
         String block;
         BlockDescription description;
         
@@ -28,6 +34,13 @@ public class BuildingDescription {
         public RelatedTo(Vector aDirection, String aBlock) {
             direction = aDirection;
             block = aBlock;
+            position = RelatedPosition.Vector;
+        }
+
+        public RelatedTo(Vector aDirection, String aBlock, RelatedPosition aRelPos) {
+            direction = aDirection;
+            block = aBlock;
+            position = aRelPos;
         }
     }
     
@@ -46,6 +59,14 @@ public class BuildingDescription {
             RelatedTo lRel = newRelatedTo();
             lRel.direction = aDirection;
             lRel.block = aBlock;
+            return lRel;
+        }
+
+        public RelatedTo newRelatedTo(Vector aDirection, String aBlock, RelatedPosition aRelPos) {
+            RelatedTo lRel = newRelatedTo();
+            lRel.direction = aDirection;
+            lRel.block = aBlock;
+            lRel.position = aRelPos;
             return lRel;
         }
     }
@@ -128,28 +149,51 @@ public class BuildingDescription {
     }
     private boolean canFollowRelateds(ArrayList<BlockDescription> aExcludes, Building aBuilding, World aWorld, BlockDescription lBlockDesc, int lX, int lY, int lZ) {
         if (!aExcludes.contains(lBlockDesc)) {
-            aBuilding.blocks.add(new BuildingBlock(lBlockDesc, new BlockPosition(lX, lY, lZ)));
+            BlockPosition lStartPos = new BlockPosition(lX, lY, lZ);
+            aBuilding.blocks.add(new BuildingBlock(lBlockDesc, lStartPos));
             if (lBlockDesc.relatedTo.size() > 0) {
-                Logger.getLogger("detect").info("check desc " + lBlockDesc.name + " at " + new BlockPosition(lX, lY, lZ));
+                Logger.getLogger("detect").info("check desc " + lBlockDesc.name + " at " + lStartPos);
                 ArrayList<RelFollower> lFs = new ArrayList<RelFollower>();
                 for(RelatedTo lRel : lBlockDesc.relatedTo) {
                     boolean lRelated = false;
                     boolean lFirst = true;
                     BlockPosition lRelatedPos = null;
-                    for(BlockPosition lPos : new WorldLineWalk(
-                            new BlockPosition(lX, lY, lZ),
-                            new BlockPosition(lX + lRel.direction.getBlockX(), lY + lRel.direction.getBlockY(), lZ + lRel.direction.getBlockZ()))) {
-                        if (lFirst) {
-                            lFirst = false;
-                        } else {
-                            //Logger.getLogger("detect").info("rel " + lRel.description.name + " at " + lPos + " mat " + lPos.getBlockType(aWorld).name());
-                            if (lPos.getBlockType(aWorld).equals(lRel.description.material)) {
-                                //Logger.getLogger("detect").info("found rel1 " + lRel.description.name);
-                                lRelatedPos = lPos;
-                                lRelated = true;
-                                break;
+                    switch(lRel.position) {
+                        case Vector:
+                            for(BlockPosition lPos : new WorldLineWalk(
+                                    lStartPos,
+                                    new BlockPosition(lX + lRel.direction.getBlockX(), lY + lRel.direction.getBlockY(), lZ + lRel.direction.getBlockZ()))) {
+                                if (lFirst) {
+                                    lFirst = false;
+                                } else {
+                                    //Logger.getLogger("detect").info("rel " + lRel.description.name + " at " + lPos + " mat " + lPos.getBlockType(aWorld).name());
+                                    if (lPos.getBlockType(aWorld).equals(lRel.description.material)) {
+                                        //Logger.getLogger("detect").info("found rel1 " + lRel.description.name);
+                                        lRelatedPos = lPos;
+                                        lRelated = true;
+                                        break;
+                                    }
+                                }
                             }
-                        }
+                            break;
+                        case Nearby:
+                            int lLength = (int)Math.round(lRel.direction.length());
+                            for(int dx = -lLength; dx >= lLength; dx++) {
+                                for(int dy = -lLength; dy >= lLength; dy++) {
+                                    for(int dz = -lLength; dz >= lLength; dz++) {
+                                        if (dx != 0 && dy != 0 && dz != 0) {
+                                            if (lStartPos.getBlockAt(aWorld, dx, dy, dz).getType().equals(lRel.description.material)) {
+                                                lRelated = true;
+                                                lRelatedPos = new BlockPosition(lX + dx, lY + dy, lZ + dz);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (lRelated) break;
+                                }
+                                if (lRelated) break;
+                            }
+                            break;
                     }
                     if (!lRelated) {
                         Logger.getLogger("detect").info("rel1 " + lRel.description.name + " not match");

@@ -108,13 +108,43 @@ public class DynamicWorld extends JavaPlugin {
         lDesc = fBuildingDetector.newDescription("Sewer.Pump.1");
         lBDesc = lDesc.newBlockDescription("WaterOut");
         lBDesc.material = Material.LAPIS_BLOCK;
-        lBDesc.newRelatedTo(new Vector(0, 5, 0), "WaterIn");
-        lBDesc.newRelatedTo(new Vector(0, 1, 0), "RedStoneWire");
+        lBDesc.newRelatedTo(new Vector(0,-5, 0), "WaterIn");
+        lBDesc.newRelatedTo(new Vector(0, 1, 0), "RedStoneWireIn", BuildingDescription.RelatedPosition.Nearby);
         lBDesc = lDesc.newBlockDescription("WaterIn");
         lBDesc.material = Material.LAPIS_BLOCK;
-        lBDesc = lDesc.newBlockDescription("RedStoneWire");
+        lBDesc.newRelatedTo(new Vector(0, 1, 0), "RedStoneWireOut", BuildingDescription.RelatedPosition.Nearby);
+        lBDesc = lDesc.newBlockDescription("RedStoneWireIn");
+        lBDesc.material = Material.REDSTONE_WIRE;
+        lBDesc = lDesc.newBlockDescription("RedStoneWireOut");
         lBDesc.material = Material.REDSTONE_WIRE;
         lDesc.activate();
+
+        lDesc = fBuildingDetector.newDescription("Sewer.Door.X");
+        lBDesc = lDesc.newBlockDescription("DoorHingeLeftTop");
+        lBDesc.material = Material.IRON_BLOCK;
+        lBDesc.newRelatedTo(new Vector(0,-10, 0), "DoorHingeLeftBottom");
+        lBDesc.newRelatedTo(new Vector(10, 0, 0), "DoorHingeRightTop");
+        lBDesc = lDesc.newBlockDescription("DoorHingeLeftBottom");
+        lBDesc.material = Material.IRON_BLOCK;
+        lBDesc = lDesc.newBlockDescription("DoorHingeRightTop");
+        lBDesc.material = Material.IRON_BLOCK;
+        lBDesc.newRelatedTo(new Vector(0,-10, 0), "DoorHingeRightBottom");
+        lBDesc = lDesc.newBlockDescription("DoorHingeRightBottom");
+        lBDesc.material = Material.IRON_BLOCK;
+
+        lDesc = fBuildingDetector.newDescription("Sewer.Door.Z");
+        lBDesc = lDesc.newBlockDescription("DoorHingeLeftTop");
+        lBDesc.material = Material.IRON_BLOCK;
+        lBDesc.newRelatedTo(new Vector(0,-10, 0), "DoorHingeLeftBottom");
+        lBDesc.newRelatedTo(new Vector(0, 0, 10), "DoorHingeRightTop");
+        lBDesc = lDesc.newBlockDescription("DoorHingeLeftBottom");
+        lBDesc.material = Material.IRON_BLOCK;
+        lBDesc = lDesc.newBlockDescription("DoorHingeRightTop");
+        lBDesc.material = Material.IRON_BLOCK;
+        lBDesc.newRelatedTo(new Vector(0,-10, 0), "DoorHingeRightBottom");
+        lBDesc = lDesc.newBlockDescription("DoorHingeRightBottom");
+        lBDesc.material = Material.IRON_BLOCK;
+
     }
 
     public void setTypeAndData(Location aLocation, Material aMaterial, byte aData, boolean  aPhysics) {

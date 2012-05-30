@@ -64,7 +64,7 @@ public class PlayerListener implements Listener {
                         lFlood.y = lBlock.getY() + 1;
                         lFlood.z = lBlock.getZ();
                         lFlood.world = lWorld;
-                        lFlood.maxBlocks = 100;
+                        lFlood.maxBlocks = 1000;
                         lFlood.propagationDirection = FloodBlocks.getPropagationDirection(FloodBlocks.Direction.HorizontalAndDown);
                         lFlood.floodedBlocks = new ArrayList<FloodBlocks.FloodedBlock>();
                         lFlood.floodedMaterials.clear();
@@ -87,6 +87,9 @@ public class PlayerListener implements Listener {
                             lFlood.floodedMaterials.add(Material.RED_ROSE);
                             lFlood.floodMaterial = Material.STATIONARY_WATER;
                             lFlood.updatePhysics = false;
+                        }
+                        if (lPlayer.isSneaking()) {
+                            lFlood.mode = FloodBlocks.Mode.FloodReverse;
                         }
                         fLastFlood = lFlood;
                         plugin.startFloodBlocks(lFlood);
