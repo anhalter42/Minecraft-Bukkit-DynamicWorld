@@ -2,4 +2,4 @@
 name: DynamicWorld
 main: com.mahn42.anhalter42.dynamicworld.DynamicWorld
 version: 0.1
-depend: [dynmap]
+depend: [dynmap,MAHN42-Framework]

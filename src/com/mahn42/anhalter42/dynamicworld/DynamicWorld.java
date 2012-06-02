@@ -4,6 +4,8 @@
  */
 package com.mahn42.anhalter42.dynamicworld;
 
+import com.mahn42.framework.BlockPosition;
+import com.mahn42.framework.Framework;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
@@ -21,11 +24,11 @@ import org.bukkit.util.Vector;
 public class DynamicWorld extends JavaPlugin {
 
     public static DynamicWorld plugin;
+    public static Framework framework;
     
     public int configSyncBlockSetterTicks = 2;
     public int configWaterFloodTicks = 10;
     
-    protected SyncBlockSetter fSyncBlockSetter;
     protected BuildingDetector fBuildingDetector;
     
     /**
@@ -39,10 +42,14 @@ public class DynamicWorld extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
+        Plugin lPlugin = getServer().getPluginManager().getPlugin("MAHN42-Framework");
+        if (lPlugin instanceof Framework) {
+            framework = (Framework)lPlugin;
+        }
         readDynamicWorldConfig();
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
-        fSyncBlockSetter = new SyncBlockSetter(this);
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, fSyncBlockSetter, 10, configSyncBlockSetterTicks);
+        getServer().getPluginManager().registerEvents(new BlockListener(this), this);
+        
         fBuildingDetector = new BuildingDetector();
         BuildingDescription lDesc;
         BuildingDescription.BlockDescription lBDesc;
@@ -152,7 +159,7 @@ public class DynamicWorld extends JavaPlugin {
     }
 
     public void setTypeAndData(Location aLocation, Material aMaterial, byte aData, boolean  aPhysics) {
-        fSyncBlockSetter.setTypeAndData(aLocation, aMaterial, aData, aPhysics);
+        framework.setTypeAndData(aLocation, aMaterial, aData, aPhysics);
     }
     
     protected ArrayList<FloodBlocks> fFloodBlocks = new ArrayList<FloodBlocks>();

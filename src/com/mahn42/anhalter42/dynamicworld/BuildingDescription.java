@@ -4,6 +4,8 @@
  */
 package com.mahn42.anhalter42.dynamicworld;
 
+import com.mahn42.framework.WorldLineWalk;
+import com.mahn42.framework.BlockPosition;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;

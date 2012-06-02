@@ -4,6 +4,7 @@
  */
 package com.mahn42.anhalter42.dynamicworld;
 
+import com.mahn42.framework.BlockPosition;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 import org.bukkit.World;
