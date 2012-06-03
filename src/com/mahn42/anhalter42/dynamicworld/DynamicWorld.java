@@ -26,7 +26,7 @@ public class DynamicWorld extends JavaPlugin {
     public static DynamicWorld plugin;
     public static Framework framework;
     
-    public int configSyncBlockSetterTicks = 2;
+    //public int configSyncBlockSetterTicks = 2;
     public int configWaterFloodTicks = 10;
     
     protected BuildingDetector fBuildingDetector;
@@ -42,10 +42,11 @@ public class DynamicWorld extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
-        Plugin lPlugin = getServer().getPluginManager().getPlugin("MAHN42-Framework");
-        if (lPlugin instanceof Framework) {
-            framework = (Framework)lPlugin;
-        }
+        framework = Framework.plugin;
+        //Plugin lPlugin = getServer().getPluginManager().getPlugin("MAHN42-Framework");
+        //if (lPlugin instanceof Framework) {
+        //    framework = (Framework)lPlugin;
+        //}
         readDynamicWorldConfig();
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockListener(this), this);
@@ -186,7 +187,7 @@ public class DynamicWorld extends JavaPlugin {
 
     private void readDynamicWorldConfig() {
         FileConfiguration lConfig = getConfig();
-        configSyncBlockSetterTicks = lConfig.getInt("SyncBlockSetter.Ticks");
+        //configSyncBlockSetterTicks = lConfig.getInt("SyncBlockSetter.Ticks");
         configWaterFloodTicks = lConfig.getInt("WaterFlood.Ticks");
     }
     

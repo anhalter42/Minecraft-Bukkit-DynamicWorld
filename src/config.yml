@@ -1,7 +1,5 @@
 ## YAML Template.
 ---
-SyncBlockSetter:
-  Ticks: 2
 WaterFlood:
   Ticks: 10
   

@@ -5,17 +5,16 @@
 package com.mahn42.anhalter42.dynamicworld;
 
 import com.mahn42.framework.BlockPosition;
-import com.mahn42.framework.DBRecord;
+import com.mahn42.framework.DBRecordWorld;
 import com.mahn42.framework.DBSet;
 import java.util.ArrayList;
-import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 /**
  *
  * @author andre
  */
-public class Building extends DBRecord {
+public class Building extends DBRecordWorld {
     public String name;
     public String playerName;
     public BuildingDescription description;
@@ -27,10 +26,6 @@ public class Building extends DBRecord {
 
     public String getName() {
         return name == null ? description.name + "(" + playerName + ")" : name;
-    }
-    
-    public void setWorld(World aWorld) {
-        fWorld = aWorld;
     }
     
     @Override
@@ -45,7 +40,6 @@ public class Building extends DBRecord {
         aCols.add(edge2.x);
         aCols.add(edge2.y);
         aCols.add(edge2.z);
-        //aCols.add(blocks.size());
         String lBlocks = null;
         for(BuildingBlock lBlock : blocks) {
             if (lBlocks == null) {
@@ -70,7 +64,6 @@ public class Building extends DBRecord {
         edge2.x = aCols.popInt();
         edge2.y = aCols.popInt();
         edge2.z = aCols.popInt();
-        //int lCount = aCols.popInt();
         String lBlocks = aCols.pop();
         String lBlockStr[] = lBlocks.split("|");
         for(String lCSVValue : lBlockStr ) {
@@ -94,11 +87,11 @@ public class Building extends DBRecord {
             edge2.y = Math.max(edge2.y, lBlock.position.y);
             edge2.z = Math.max(edge2.z, lBlock.position.z);
         }
-        if (fWorld != null) {
+        if (world != null) {
             maxHeight = 0;
             for(int lX = edge1.x; lX <= edge2.x; lX++) {
                 for(int lZ = edge1.z; lZ <= edge2.z; lZ++) {
-                    int lHeight = fWorld.getHighestBlockYAt(lX, lZ);
+                    int lHeight = world.getHighestBlockYAt(lX, lZ);
                     if (lHeight > maxHeight) {
                         maxHeight = lHeight;
                     }
@@ -111,14 +104,9 @@ public class Building extends DBRecord {
         influenceRadius = (int) Math.round(description.influenceRadiusFactor * (edge2.y - edge1.y));
     }
     
-    protected World fWorld;
-    
     @Override
     protected void added(DBSet aSet) {
         super.added(aSet);
-        if (aSet instanceof BuildingDB) {
-            fWorld = ((BuildingDB)aSet).fWorld;
-        }
         update();
     }
 

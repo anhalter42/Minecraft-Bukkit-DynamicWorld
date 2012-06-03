@@ -4,7 +4,7 @@
  */
 package com.mahn42.anhalter42.dynamicworld;
 
-import com.mahn42.framework.DBSet;
+import com.mahn42.framework.DBSetWorld;
 import java.io.File;
 import org.bukkit.World;
 
@@ -12,11 +12,8 @@ import org.bukkit.World;
  *
  * @author andre
  */
-public class BuildingDB extends DBSet {
-    protected World fWorld;
-    
+public class BuildingDB extends DBSetWorld {
     public BuildingDB(World aWorld, File aFile) {
-        super(Building.class, aFile);
-        fWorld = aWorld;
+        super(Building.class, aFile, aWorld);
     }
 }

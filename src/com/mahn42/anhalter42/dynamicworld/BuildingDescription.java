@@ -4,8 +4,8 @@
  */
 package com.mahn42.anhalter42.dynamicworld;
 
-import com.mahn42.framework.WorldLineWalk;
 import com.mahn42.framework.BlockPosition;
+import com.mahn42.framework.WorldLineWalk;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -117,7 +117,7 @@ public class BuildingDescription {
             for(RelatedTo lRel : lBDesc.relatedTo) {
                 lRel.description = lHash.get(lRel.block);
                 if (lRel.description == null) {
-                    DynamicWorld.plugin.getLogger().info("block description " + lRel.block + " of building description '" + name + "'");
+                    DynamicWorld.plugin.getLogger().info("block description " + lRel.block + " of building description '" + name + "' not found!");
                 }
             }
         }
