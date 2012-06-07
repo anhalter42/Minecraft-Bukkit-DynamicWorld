@@ -44,6 +44,7 @@ public class FloodBlocks implements Runnable {
     public Delta[] propagationDirection;
     public ArrayList<FloodedBlock> floodedBlocks;
     public int turnsUntilReverse = 5;
+    public boolean floodDown = false;
     
     public static class Delta {
          public int dx, dy, dz;
@@ -156,10 +157,14 @@ public class FloodBlocks implements Runnable {
     }
 
     protected int fTurns;
+    protected ArrayList<Integer> fReverseCounts = new ArrayList<Integer>();
+    protected int fReversePos;
 
     protected void init() {
         if (!fInit) {
             fTurns = 0;
+            fReverseCounts.clear();
+            fReversePos = 0;
             switch(mode) {
                 case Flood: case FloodReverse:
                     FloodItem lItem = new FloodItem();
@@ -190,20 +195,27 @@ public class FloodBlocks implements Runnable {
             fInit = true;
         }
     }
+
+    protected boolean fInRun = false;
     
     @Override
     public void run() {
-        if (active) {
-            init();
-            switch(mode) {
-                case Flood: case FloodReverse:
-                    flood();
-                    break;
-                case Reverse:
-                    reverse();
-                    break;
+        if (active && !fInRun) {
+            fInRun = true;
+            try {
+                init();  
+                switch(mode) {
+                    case Flood: case FloodReverse:
+                        flood();
+                        break;
+                    case Reverse:
+                        reverse();
+                        break;
+                }
+                fTurns++;
+            } finally {
+                fInRun = false;
             }
-            fTurns++;
         }
     }
     
@@ -211,61 +223,102 @@ public class FloodBlocks implements Runnable {
         if (fSettedItemsCount < maxBlocks) {
             fAllItems.addAll(fItems);
             ArrayList<FloodItem> lNewItems = new ArrayList<FloodItem>();
+            int lOldFloodedCount = floodedBlocks.size();
             for(FloodItem lItem : fItems) {
                 Block lBlock = world.getBlockAt(lItem.x, lItem.y, lItem.z);
                 Material lMat = lBlock.getType();
                 if (floodedMaterials.contains(lMat)) {
-                    if (!lMat.equals(floodMaterial)) {
-                        if (floodedBlocks != null) {
-                            FloodedBlock lFBlock = new FloodedBlock();
-                            lFBlock.x = lBlock.getX();
-                            lFBlock.y = lBlock.getY();
-                            lFBlock.z = lBlock.getZ();
-                            lFBlock.typeId = lBlock.getTypeId();
-                            lFBlock.data = lBlock.getData();
-                            floodedBlocks.add(lFBlock);
-                        }
-                        plugin.setTypeAndData(lBlock.getLocation(), floodMaterial, (byte)0, updatePhysics);
-                        fSettedItemsCount++;
-                    }
-                    for(Delta lDelta : propagationDirection) {
-                        FloodItem lNew = new FloodItem();
-                        lNew.x = lItem.x + lDelta.dx;
-                        lNew.y = lItem.y + lDelta.dy;
-                        lNew.z = lItem.z + lDelta.dz;
-                        if (lNew.y >= 0 && lNew.y <= world.getMaxHeight()
-                                && !lNewItems.contains(lNew)
-                                && !fItems.contains(lNew)
-                                && !fAllItems.contains(lNew)) {
-                            lNewItems.add(lNew);
+                    if (floodDown) {
+                        floodDown(lItem.x, lItem.y, lItem.z);
+                    } else {
+                        if (!lMat.equals(floodMaterial)) {
+                            if (floodedBlocks != null) {
+                                FloodedBlock lFBlock = new FloodedBlock();
+                                lFBlock.x = lBlock.getX();
+                                lFBlock.y = lBlock.getY();
+                                lFBlock.z = lBlock.getZ();
+                                lFBlock.typeId = lBlock.getTypeId();
+                                lFBlock.data = lBlock.getData();
+                                floodedBlocks.add(lFBlock);
+                            }
+                            plugin.setTypeAndData(lBlock.getLocation(), floodMaterial, (byte)0, updatePhysics);
+                            fSettedItemsCount++;
                         }
                     }
+                    floodDirections(lItem, lNewItems);
                 }
             }
             fItems.clear();
             fItems = lNewItems;
+            fReverseCounts.add(floodedBlocks.size() - lOldFloodedCount);
         }
-        if (mode == Mode.FloodReverse && fTurns > turnsUntilReverse) {
-            int lCount = fReverseBlocksInStep;
-                while (floodedBlocks.size() > 0 && lCount >= 0) {
-                    FloodedBlock lBlock = floodedBlocks.get(0);
-                    floodedBlocks.remove(0);
-                    plugin.setTypeAndData(new Location(world, (double)lBlock.x, lBlock.y, lBlock.z), Material.getMaterial(lBlock.typeId), lBlock.data, updatePhysics);
-                    lCount--;
-                }
-            if (floodedBlocks.isEmpty() && (fItems.isEmpty() || fSettedItemsCount > maxBlocks)) {
-                active = false;
-                fInit = false;
-                plugin.stopFloodBlocks(this);
+        if (mode == Mode.FloodReverse && fTurns > turnsUntilReverse && !fReverseCounts.isEmpty()) {
+            int lCount = fReverseCounts.get(0);
+            fReverseCounts.remove(0);
+            while (fReversePos < floodedBlocks.size() && lCount >= 0) {
+                FloodedBlock lBlock = floodedBlocks.get(fReversePos);
+                fReversePos++;
+                plugin.setTypeAndData(new Location(world, (double)lBlock.x, lBlock.y, lBlock.z), Material.getMaterial(lBlock.typeId), lBlock.data, false);
+                lCount--;
+            }
+            if (fReverseCounts.isEmpty()) {
+                floodStop();
             }
         }
         if (mode == Mode.Flood && (fItems.isEmpty() || fSettedItemsCount > maxBlocks)) {
-            active = false;
-            fInit = false;
-            fItems.clear();
-            fAllItems.clear();
-            plugin.stopFloodBlocks(this);
+            floodStop();
         }
+    }
+
+    protected void floodDirections(FloodItem aItem, ArrayList<FloodItem> aNewItems) {
+        for(Delta lDelta : propagationDirection) {
+            FloodItem lNew = new FloodItem();
+            lNew.x = aItem.x + lDelta.dx;
+            lNew.y = aItem.y + lDelta.dy;
+            lNew.z = aItem.z + lDelta.dz;
+            if (lNew.y >= 0 && lNew.y <= world.getMaxHeight()
+                    && !aNewItems.contains(lNew)
+                    && !fItems.contains(lNew)
+                    && !fAllItems.contains(lNew)) {
+                aNewItems.add(lNew);
+            }
+        }
+    }
+    
+    protected void floodDown(int aX, int aY, int aZ) {
+        do {
+            Block lBlock = world.getBlockAt(aX, aY, aZ);
+            Material lMat = lBlock.getType();
+            if (floodedMaterials.contains(lMat)) {
+                if (!lMat.equals(floodMaterial)) {
+                    if (floodedBlocks != null) {
+                        FloodedBlock lFBlock = new FloodedBlock();
+                        lFBlock.x = lBlock.getX();
+                        lFBlock.y = lBlock.getY();
+                        lFBlock.z = lBlock.getZ();
+                        lFBlock.typeId = lBlock.getTypeId();
+                        lFBlock.data = lBlock.getData();
+                        floodedBlocks.add(lFBlock);
+                    }
+                    plugin.setTypeAndData(lBlock.getLocation(), floodMaterial, (byte)0, updatePhysics);
+                    fSettedItemsCount++;
+                    aY--;
+                } else {
+                    return;
+                }
+            } else {
+                return;
+            }
+        } while (aY > 0);
+    }
+    
+
+    protected void floodStop() {
+        active = false;
+        fInit = false;
+        fItems.clear();
+        fAllItems.clear();
+        plugin.stopFloodBlocks(this);
     }
     
     protected int fReverseBlocksInStep = 10;

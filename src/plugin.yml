@@ -1,5 +1,5 @@
 ## YAML Template.
 name: DynamicWorld
 main: com.mahn42.anhalter42.dynamicworld.DynamicWorld
-version: 0.1
-depend: [dynmap,MAHN42-Framework]
+version: 0.2
+depend: [MAHN42-Framework]

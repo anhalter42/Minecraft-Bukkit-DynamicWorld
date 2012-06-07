@@ -4,6 +4,7 @@
  */
 package com.mahn42.anhalter42.dynamicworld;
 
+import com.mahn42.framework.Building;
 import java.util.ArrayList;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -25,7 +26,7 @@ public class PlayerListener implements Listener {
     public PlayerListener(DynamicWorld aPlugin) {
         plugin = aPlugin;
     }
-    
+
     protected FloodBlocks fLastFlood = null;
     
     @EventHandler
@@ -64,7 +65,9 @@ public class PlayerListener implements Listener {
                         lFlood.y = lBlock.getY() + 1;
                         lFlood.z = lBlock.getZ();
                         lFlood.world = lWorld;
-                        lFlood.maxBlocks = 1000;
+                        lFlood.floodDown = true;
+                        lFlood.maxBlocks = 10000;
+                        lFlood.turnsUntilReverse = 20;
                         lFlood.propagationDirection = FloodBlocks.getPropagationDirection(FloodBlocks.Direction.HorizontalAndDown);
                         lFlood.floodedBlocks = new ArrayList<FloodBlocks.FloodedBlock>();
                         lFlood.floodedMaterials.clear();
@@ -86,7 +89,7 @@ public class PlayerListener implements Listener {
                             lFlood.floodedMaterials.add(Material.YELLOW_FLOWER);
                             lFlood.floodedMaterials.add(Material.RED_ROSE);
                             lFlood.floodMaterial = Material.STATIONARY_WATER;
-                            lFlood.updatePhysics = false;
+                            lFlood.updatePhysics = true;
                         }
                         if (lPlayer.isSneaking()) {
                             lFlood.mode = FloodBlocks.Mode.FloodReverse;

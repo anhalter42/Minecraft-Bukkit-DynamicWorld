@@ -4,6 +4,10 @@
  */
 package com.mahn42.anhalter42.dynamicworld;
 
+import com.mahn42.framework.BuildingDB;
+import com.mahn42.framework.Building;
+import com.mahn42.framework.BuildingDetector;
+import com.mahn42.framework.BuildingDescription;
 import com.mahn42.framework.BlockPosition;
 import com.mahn42.framework.Framework;
 import java.io.File;
@@ -29,8 +33,6 @@ public class DynamicWorld extends JavaPlugin {
     //public int configSyncBlockSetterTicks = 2;
     public int configWaterFloodTicks = 10;
     
-    protected BuildingDetector fBuildingDetector;
-    
     /**
      * @param args the command line arguments
      */
@@ -51,11 +53,10 @@ public class DynamicWorld extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockListener(this), this);
         
-        fBuildingDetector = new BuildingDetector();
         BuildingDescription lDesc;
         BuildingDescription.BlockDescription lBDesc;
 
-        lDesc = fBuildingDetector.newDescription("Statue.Watergod.Waterpod.1");
+        lDesc = framework.getBuildingDetector().newDescription("Statue.Watergod.Waterpod.1");
         lDesc.influenceRadiusFactor = 10;
         lBDesc = lDesc.newBlockDescription("Water");
         lBDesc.material = Material.STATIONARY_WATER;
@@ -76,7 +77,7 @@ public class DynamicWorld extends JavaPlugin {
         lBDesc.material = Material.AIR;
         lDesc.activate();
         
-        lDesc = fBuildingDetector.newDescription("Statue.Firegod.Lavapod.1");
+        lDesc = framework.getBuildingDetector().newDescription("Statue.Firegod.Lavapod.1");
         lDesc.influenceRadiusFactor = 10;
         lBDesc = lDesc.newBlockDescription("Lava");
         lBDesc.material = Material.STATIONARY_LAVA;
@@ -97,7 +98,7 @@ public class DynamicWorld extends JavaPlugin {
         lBDesc.material = Material.AIR;
         lDesc.activate();
         
-        lDesc = fBuildingDetector.newDescription("Statue.Firegod.Nether.1");
+        lDesc = framework.getBuildingDetector().newDescription("Statue.Firegod.Nether.1");
         lDesc.influenceRadiusFactor = 2;
         lBDesc = lDesc.newBlockDescription("Fire");
         lBDesc.material = Material.FIRE;
@@ -106,7 +107,7 @@ public class DynamicWorld extends JavaPlugin {
         lBDesc.material = Material.NETHERRACK;
         lDesc.activate();
         
-        lDesc = fBuildingDetector.newDescription("Statue.Firegod.Glow.1");
+        lDesc = framework.getBuildingDetector().newDescription("Statue.Firegod.Glow.1");
         lDesc.influenceRadiusFactor = 10;
         lBDesc = lDesc.newBlockDescription("Glow");
         lBDesc.material = Material.GLOWSTONE;
@@ -115,7 +116,7 @@ public class DynamicWorld extends JavaPlugin {
         lBDesc.material = Material.STONE;
         lDesc.activate();
 
-        lDesc = fBuildingDetector.newDescription("Sewer.Pump.1");
+        lDesc = framework.getBuildingDetector().newDescription("Sewer.Pump.1");
         lBDesc = lDesc.newBlockDescription("WaterOut");
         lBDesc.material = Material.LAPIS_BLOCK;
         lBDesc.newRelatedTo(new Vector(0,-5, 0), "WaterIn");
@@ -129,7 +130,7 @@ public class DynamicWorld extends JavaPlugin {
         lBDesc.material = Material.REDSTONE_WIRE;
         lDesc.activate();
 
-        lDesc = fBuildingDetector.newDescription("Sewer.Door.X");
+        lDesc = framework.getBuildingDetector().newDescription("Sewer.Door.X");
         lBDesc = lDesc.newBlockDescription("DoorHingeLeftTop");
         lBDesc.material = Material.IRON_BLOCK;
         lBDesc.newRelatedTo(new Vector(0,-10, 0), "DoorHingeLeftBottom");
@@ -143,7 +144,7 @@ public class DynamicWorld extends JavaPlugin {
         lBDesc.material = Material.IRON_BLOCK;
         lDesc.activate();
 
-        lDesc = fBuildingDetector.newDescription("Sewer.Door.Z");
+        lDesc = framework.getBuildingDetector().newDescription("Sewer.Door.Z");
         lBDesc = lDesc.newBlockDescription("DoorHingeLeftTop");
         lBDesc.material = Material.IRON_BLOCK;
         lBDesc.newRelatedTo(new Vector(0,-10, 0), "DoorHingeLeftBottom");
@@ -196,16 +197,11 @@ public class DynamicWorld extends JavaPlugin {
         BlockPosition aPos2 = new BlockPosition(aLocation);
         aPos1.add(-5,-5,-5);
         aPos2.add( 5, 5, 5);
-        return fBuildingDetector.detect(aWorld, aPos1, aPos2);
+        return framework.getBuildingDetector().detect(aWorld, aPos1, aPos2);
     }
     
     public BuildingDescription getBuildingDescription(String aName) {
-        for(BuildingDescription lDesc : fBuildingDetector.fDescriptions) {
-            if (aName.equalsIgnoreCase(lDesc.name)) {
-                return lDesc;
-            }
-        }
-        return null;
+        return framework.getBuildingDescription(aName);
     }
 
     protected HashMap<String, BuildingDB> fBuildingDBs;
