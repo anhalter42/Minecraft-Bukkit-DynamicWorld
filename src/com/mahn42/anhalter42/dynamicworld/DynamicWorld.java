@@ -10,6 +10,7 @@ import com.mahn42.framework.BuildingDetector;
 import com.mahn42.framework.BuildingDescription;
 import com.mahn42.framework.BlockPosition;
 import com.mahn42.framework.Framework;
+import com.mahn42.framework.WorldDBList;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ public class DynamicWorld extends JavaPlugin {
 
     public static DynamicWorld plugin;
     public static Framework framework;
+    public WorldDBList DBs;
     
     //public int configSyncBlockSetterTicks = 2;
     public int configWaterFloodTicks = 10;
@@ -37,14 +39,15 @@ public class DynamicWorld extends JavaPlugin {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Material lMat = Material.getMaterial("IRON_BLOCK");
-        System.out.println(lMat);
+    //    Material lMat = Material.getMaterial("IRON_BLOCK");
+    //    System.out.println(lMat);
     }
     
     @Override
     public void onEnable() {
         plugin = this;
         framework = Framework.plugin;
+        DBs = new WorldDBList(BuildingDB.class, this);
         //Plugin lPlugin = getServer().getPluginManager().getPlugin("MAHN42-Framework");
         //if (lPlugin instanceof Framework) {
         //    framework = (Framework)lPlugin;
@@ -52,7 +55,7 @@ public class DynamicWorld extends JavaPlugin {
         readDynamicWorldConfig();
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockListener(this), this);
-        
+        /*
         BuildingDescription lDesc;
         BuildingDescription.BlockDescription lBDesc;
 
@@ -157,6 +160,8 @@ public class DynamicWorld extends JavaPlugin {
         lBDesc = lDesc.newBlockDescription("DoorHingeRightBottom");
         lBDesc.material = Material.IRON_BLOCK;
         lDesc.activate();
+        * 
+        */
 
     }
 
@@ -188,7 +193,6 @@ public class DynamicWorld extends JavaPlugin {
 
     private void readDynamicWorldConfig() {
         FileConfiguration lConfig = getConfig();
-        //configSyncBlockSetterTicks = lConfig.getInt("SyncBlockSetter.Ticks");
         configWaterFloodTicks = lConfig.getInt("WaterFlood.Ticks");
     }
     
@@ -204,27 +208,7 @@ public class DynamicWorld extends JavaPlugin {
         return framework.getBuildingDescription(aName);
     }
 
-    protected HashMap<String, BuildingDB> fBuildingDBs;
-    
     public BuildingDB getBuildingDB(String aWorldName) {
-        if (fBuildingDBs == null) {
-            fBuildingDBs = new HashMap<String, BuildingDB>();
-        }
-        if (!fBuildingDBs.containsKey(aWorldName)) {
-            World lWorld = getServer().getWorld(aWorldName);
-            File lFolder = getDataFolder();
-            //File lFolder = lWorld.getWorldFolder();
-            if (!lFolder.exists()) {
-                lFolder.mkdirs();
-            }
-            String lPath = lFolder.getPath();
-            lPath = lPath + File.separatorChar + aWorldName + "_building.csv";
-            File lFile = new File(lPath);
-            BuildingDB lDB = new BuildingDB(lWorld, lFile);
-            lDB.load();
-            getLogger().info("Datafile " + lFile.toString() + " loaded. (Records:" + new Integer(lDB.size()).toString() + ")");
-            fBuildingDBs.put(aWorldName, lDB);
-        }
-        return fBuildingDBs.get(aWorldName);
+        return (BuildingDB)DBs.getDB(aWorldName);
     }
 }

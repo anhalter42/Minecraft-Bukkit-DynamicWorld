@@ -65,7 +65,7 @@ public class PlayerListener implements Listener {
                         lFlood.y = lBlock.getY() + 1;
                         lFlood.z = lBlock.getZ();
                         lFlood.world = lWorld;
-                        lFlood.floodDown = true;
+                        lFlood.floodDown = false;
                         lFlood.maxBlocks = 10000;
                         lFlood.turnsUntilReverse = 20;
                         lFlood.propagationDirection = FloodBlocks.getPropagationDirection(FloodBlocks.Direction.HorizontalAndDown);
@@ -76,6 +76,10 @@ public class PlayerListener implements Listener {
                             lFlood.floodedMaterials.add(Material.STATIONARY_WATER);
                             lFlood.floodedMaterials.add(Material.LAVA);
                             lFlood.floodedMaterials.add(Material.STATIONARY_LAVA);
+                            lFlood.floodedMaterials.add(Material.ICE);
+                            lFlood.floodedMaterials.add(Material.getMaterial(78));
+                            lFlood.floodedMaterials.add(Material.getMaterial(79));
+                            lFlood.floodedMaterials.add(Material.getMaterial(80));
                             lFlood.floodMaterial = Material.AIR;
                             lFlood.updatePhysics = false;
                         } else {
@@ -106,6 +110,7 @@ public class PlayerListener implements Listener {
                     plugin.startFloodBlocks(fLastFlood);
                     fLastFlood = null;
                 }
+                /*
             } else if (event.hasItem() && lInHand.equals(Material.BOOK)) {
                 Block lBlock = event.getClickedBlock();
                 if (lBlock != null) { 
@@ -122,6 +127,7 @@ public class PlayerListener implements Listener {
                         lPlayer.sendMessage("no building found.");
                     }
                 }
+                */
             }
         }
     }
