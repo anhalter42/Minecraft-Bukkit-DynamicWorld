@@ -13,6 +13,13 @@ Es können Berge entstehen durch Anheben der Erde. Mit Lavaanteilen oder auch oh
 Es können Senken entstehen durch absenken der Erde mit Wasseranteilen oder auch ohne.
 Es kann Überflutungen geben.
 
+Anforderungen
+-------------
+
+Es wird das Plugin Minecraft-Bukkit-Mahn42-Framework benötigt:
+
+https://github.com/Mahn42/Minecraft-Bukkit-Mahn42-Framework
+
 Schutz
 ------
 
