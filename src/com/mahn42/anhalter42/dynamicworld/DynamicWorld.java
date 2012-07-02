@@ -55,6 +55,9 @@ public class DynamicWorld extends JavaPlugin {
         readDynamicWorldConfig();
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockListener(this), this);
+        
+        getCommand("dw_test").setExecutor(new CommandTestTask());
+
         /*
         BuildingDescription lDesc;
         BuildingDescription.BlockDescription lBDesc;

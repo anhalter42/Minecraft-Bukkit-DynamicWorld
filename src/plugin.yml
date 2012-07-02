@@ -3,3 +3,17 @@ name: DynamicWorld
 main: com.mahn42.anhalter42.dynamicworld.DynamicWorld
 version: 0.2
 depend: [MAHN42-Framework]
+commands:
+   dw_test:
+      description: only for testing algos.
+      usage: /dw_test int1 int2 int3
+      permission: dw.test
+      permission-message: You don't have permission
+permissions:
+    dw.*:
+        description: Gives access to all Dynamic World commands
+        children:
+            dw.test: true
+    dw.test:
+        description: Allows you to check algos for testing purpose
+        default: true
