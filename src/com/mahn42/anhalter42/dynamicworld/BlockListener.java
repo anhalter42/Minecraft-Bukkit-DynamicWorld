@@ -27,15 +27,11 @@ public class BlockListener implements Listener {
     public void breakBlock(BlockBreakEvent aEvent) {
         Block lBlock = aEvent.getBlock();
         //plugin.getLogger().info("BlockBreakEvent:" + lBlock.toString());
-        //TODO check if block is part of a building
-        // if so then delete building record
     }
 
     @EventHandler
     public void redstoneBlock(BlockRedstoneEvent aEvent) {
         Block lBlock = aEvent.getBlock();
         //plugin.getLogger().info("BlockRedstoneEvent:" + lBlock.toString() + " current:" + new Integer(aEvent.getNewCurrent()));
-        //TODO check if block is part of a building
-        // if so then delete building record
     }
 }
