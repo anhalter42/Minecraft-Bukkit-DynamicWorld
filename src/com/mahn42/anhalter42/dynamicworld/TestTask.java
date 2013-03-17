@@ -8,12 +8,12 @@ import com.mahn42.framework.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Logger;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftEntity;
 import org.bukkit.entity.*;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 /**
@@ -45,6 +45,9 @@ public class TestTask implements Runnable {
                 break;
             case 3:
                 execute_3();
+                break;
+            case 4:
+                execute_4();
                 break;
             default:
                 stop();
@@ -127,13 +130,21 @@ public class TestTask implements Runnable {
         }
         if (f1_Item == null) {
             //f1_Item = f1_World.spawn(f1_Center.getLocation(f1_World), Fireball.class);
-            f1_Item = f1_World.spawn(f1_Walk.positions.get(f1_WalkPos).getLocation(f1_World), org.bukkit.entity.Boat.class);
+            //f1_Item = f1_World.spawn(f1_Walk.positions.get(f1_WalkPos).getLocation(f1_World), org.bukkit.entity.Boat.class);
+            //f1_Item = f1_World.spawnEntity(f1_Walk.positions.get(f1_WalkPos).getLocation(f1_World), EntityType.BAT);
+            f1_Item = f1_World.spawnEntity(f1_Walk.positions.get(f1_WalkPos).getLocation(f1_World), EntityType.VILLAGER);
+            //Villager lVil = (Villager)f1_Item;
+            //lVil.set
+            //lVil.setProfession(Villager.Profession.LIBRARIAN);
             //f1_Item = f1_World.spawn(f1_Walk.positions.get(f1_WalkPos).getLocation(f1_World), org.bukkit.entity.FallingSand.class);
             //((org.bukkit.entity.Boat)f1_Item).
             //f1_Item.setBounce(false);
             //((Fireball)f1_Item).setBounce(false);
         }
-        if (f1_Item.isDead()) stop();
+        if (f1_Item.isDead()) {
+            stop();
+            return;
+        }
         Vector lVelo = new Vector(
                 f1_Walk.positions.get(f1_WalkPos).x - f1_Item.getLocation().getBlockX(),
                 f1_Walk.positions.get(f1_WalkPos).y - f1_Item.getLocation().getBlockY(),
@@ -145,6 +156,9 @@ public class TestTask implements Runnable {
         //f1_Item.setFallDistance(1000);
         //f1_Item.teleport(f1_Walk.positions.get(f1_WalkPos).getLocation(f1_World), PlayerTeleportEvent.TeleportCause.PLUGIN);
         f1_Item.setVelocity(lVelo);
+        f1_Item.getEntityId();
+        //net.minecraft.server.Entity lEntity = ((CraftEntity)f1_Item).getHandle();
+        //lEntity.setPosition(f1_Walk.positions.get(f1_WalkPos).x, f1_Walk.positions.get(f1_WalkPos).y, f1_Walk.positions.get(f1_WalkPos).z);
         log("dest " + f1_Walk.positions.get(f1_WalkPos) + " cur " + new BlockPosition(f1_Item.getLocation()));
         //lList.add(f1_Walk.positions.get(f1_WalkPos), Material.WOOL, WoolColors.white, true);
         //lList.execute();
@@ -390,4 +404,31 @@ public class TestTask implements Runnable {
             stop();
         }*/
     }    
+    
+    net.minecraft.server.v1_4_6.Entity f4_item = null;
+    
+    Random f4_r = new Random();
+    
+    private void execute_4() {
+        if (f4_item == null) {
+            Location lLoc = player.getLocation().add(1, 0, 1);
+            lLoc.setPitch(0.0f);
+            lLoc.setYaw(0.0f);
+            Entity lEntity = player.getWorld().spawnEntity(lLoc, EntityType.PRIMED_TNT);
+            f4_item = ((CraftEntity)lEntity).getHandle();
+        }
+        Location lLoc = f4_item.getBukkitEntity().getLocation();
+        lLoc = lLoc.add(f4_r.nextInt(4)-2, 0, f4_r.nextInt(4)-2);
+        //PathEntity pf;
+        //pf = ((CraftWorld)f4_item.getBukkitEntity().getWorld()).getHandle().a(f4_item, lLoc.getBlockX(), lLoc.getBlockY(), lLoc.getBlockZ(), 100.0f, true, false, false, true);
+        //f4_item.setPosition(lLoc.getX(), lLoc.getY(), lLoc.getZ());
+        f4_item.setLocation(lLoc.getX(), lLoc.getY(), lLoc.getZ(), 0, 0);
+        /*
+        Navigation lNavigation = f4_item.getNavigation();
+        lNavigation.a(pf, 0.4f);
+        */
+        par2--;
+        if (par2 < 0)
+            stop();
+    }
 }

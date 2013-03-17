@@ -4,7 +4,6 @@
  */
 package com.mahn42.anhalter42.dynamicworld;
 
-import com.mahn42.framework.Building;
 import java.util.ArrayList;
 import org.bukkit.Material;
 import org.bukkit.World;
