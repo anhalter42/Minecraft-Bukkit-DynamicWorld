@@ -7,12 +7,12 @@ package com.mahn42.anhalter42.dynamicworld;
 import com.mahn42.framework.*;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Set;
 import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_4_6.entity.CraftEntity;
 import org.bukkit.entity.*;
 import org.bukkit.util.Vector;
 
@@ -45,9 +45,6 @@ public class TestTask implements Runnable {
                 break;
             case 3:
                 execute_3();
-                break;
-            case 4:
-                execute_4();
                 break;
             default:
                 stop();
@@ -267,7 +264,7 @@ public class TestTask implements Runnable {
             f2_length = par3;
             if (player != null) {
                 f1_World = player.getWorld();
-                f1_Center = new BlockPosition(player.getTargetBlock(null, 50).getLocation());
+                f1_Center = new BlockPosition(player.getTargetBlock((Set<Material>)null, 50).getLocation());
                 f1_Center.y++;
             } else {
                 f1_World = DynamicWorld.plugin.getServer().getWorld("world");
@@ -404,31 +401,4 @@ public class TestTask implements Runnable {
             stop();
         }*/
     }    
-    
-    net.minecraft.server.v1_4_6.Entity f4_item = null;
-    
-    Random f4_r = new Random();
-    
-    private void execute_4() {
-        if (f4_item == null) {
-            Location lLoc = player.getLocation().add(1, 0, 1);
-            lLoc.setPitch(0.0f);
-            lLoc.setYaw(0.0f);
-            Entity lEntity = player.getWorld().spawnEntity(lLoc, EntityType.PRIMED_TNT);
-            f4_item = ((CraftEntity)lEntity).getHandle();
-        }
-        Location lLoc = f4_item.getBukkitEntity().getLocation();
-        lLoc = lLoc.add(f4_r.nextInt(4)-2, 0, f4_r.nextInt(4)-2);
-        //PathEntity pf;
-        //pf = ((CraftWorld)f4_item.getBukkitEntity().getWorld()).getHandle().a(f4_item, lLoc.getBlockX(), lLoc.getBlockY(), lLoc.getBlockZ(), 100.0f, true, false, false, true);
-        //f4_item.setPosition(lLoc.getX(), lLoc.getY(), lLoc.getZ());
-        f4_item.setLocation(lLoc.getX(), lLoc.getY(), lLoc.getZ(), 0, 0);
-        /*
-        Navigation lNavigation = f4_item.getNavigation();
-        lNavigation.a(pf, 0.4f);
-        */
-        par2--;
-        if (par2 < 0)
-            stop();
-    }
 }

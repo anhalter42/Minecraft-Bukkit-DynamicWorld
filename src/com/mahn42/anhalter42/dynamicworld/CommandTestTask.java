@@ -5,21 +5,17 @@
 package com.mahn42.anhalter42.dynamicworld;
 
 import com.mahn42.framework.Base64;
-import com.mahn42.framework.BlockPosition;
 import com.mahn42.framework.BlockPositionDelta;
-import com.mahn42.framework.EntityControl;
-import com.mahn42.framework.EntityControlPathItem;
-import com.mahn42.framework.EntityControlPathItemDestination;
-import com.mahn42.framework.EntityControlPathItemRelative;
-import com.mahn42.framework.EntityControlPathItemTarget;
 import com.mahn42.framework.Framework;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
@@ -94,7 +90,7 @@ public class CommandTestTask implements CommandExecutor  {
             ((Player)aCommandSender).teleport(lLoc, PlayerTeleportEvent.TeleportCause.PLUGIN);
         } else if (aStrings[0].equalsIgnoreCase("x")) {
             World lWorld = ((Player)aCommandSender).getWorld();
-            List<Block> lastTwoTargetBlocks = ((Player)aCommandSender).getLastTwoTargetBlocks(null, 200);
+            List<Block> lastTwoTargetBlocks = ((Player)aCommandSender).getLastTwoTargetBlocks((Set<Material>)null, 200);
             Location location = lastTwoTargetBlocks.get(lastTwoTargetBlocks.size()-1).getLocation();
             lWorld.createExplosion(location, Float.parseFloat(aStrings[1]), true);
         } else if (aStrings[0].endsWith("inv")) {
@@ -146,48 +142,6 @@ public class CommandTestTask implements CommandExecutor  {
             if (aStrings.length > 2) lTask.par2 = Integer.parseInt(aStrings[2]);
             if (aStrings.length > 3) lTask.par3 = Integer.parseInt(aStrings[3]);
             lTask.taskId = DynamicWorld.plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(DynamicWorld.plugin, lTask, 10, 10);
-        } else if (aStrings[0].equalsIgnoreCase("navtest")) {
-            Player lPlayer = (Player)aCommandSender;
-            Location lLoc = lPlayer.getLocation().add(1, 0, 1);
-            Entity lEntity = lPlayer.getWorld().spawnEntity(lLoc, EntityType.PIG);
-            EntityControl lC = new EntityControl(lEntity);
-            if (aStrings.length > 1) {
-                if (aStrings[1].equalsIgnoreCase("player")) {
-                    lC.path.add(new EntityControlPathItemTarget(lPlayer));
-                    Framework.plugin.getEntityController().add(lC);
-                } else if (aStrings[1].equalsIgnoreCase("follow")) {
-                    EntityControlPathItemTarget lecpi = new EntityControlPathItemTarget(lastEntity);
-                    lecpi.stayTicks = 1000;
-                    lC.path.add(lecpi);
-                    Framework.plugin.getEntityController().add(lC);
-                }
-            } else {
-                lC.path.add(new EntityControlPathItemDestination(new BlockPosition(lLoc.add(20, 0, 20))));
-                lC.path.add(new EntityControlPathItemDestination(new BlockPosition(lLoc.add(-10, 0, -10))));
-                lC.path.add(new EntityControlPathItemDestination(new BlockPosition(lLoc.add(20, 0, 20))));
-                lC.path.add(new EntityControlPathItemDestination(new BlockPosition(lLoc.add(-10, 0, -10))));
-                Framework.plugin.getEntityController().add(lC);
-            }
-            lastEntity = lEntity;
-        } else if (aStrings[0].equalsIgnoreCase("dance")) {
-            Player lPlayer = (Player)aCommandSender;
-            Location lLoc = lPlayer.getLocation().add(1, 0, 1);
-            BlockPosition lPos = new BlockPosition(lLoc);
-            for(int x=0;x<40;x+=4) {
-                BlockPosition lP = lPos.clone();
-                lP.add(x, 0, 0);
-                Entity lEntity = lPlayer.getWorld().spawnEntity(lP.getLocation(lLoc.getWorld()), EntityType.WOLF);
-                EntityControl lC = new EntityControl(lEntity);
-                lC.path.add(new EntityControlPathItemRelative(new BlockPositionDelta( 10,  0,   0)));
-                lC.path.add(new EntityControlPathItemRelative(new BlockPositionDelta(  0,  0,  10)));
-                lC.path.add(new EntityControlPathItemRelative(new BlockPositionDelta(  0,  0, -10)));
-                lC.path.add(new EntityControlPathItemRelative(new BlockPositionDelta( 10,  0,   0)));
-                lC.path.add(new EntityControlPathItemRelative(new BlockPositionDelta( 10,  0,  10)));
-                lC.path.add(new EntityControlPathItemRelative(new BlockPositionDelta(-10,  0, -10)));
-                lC.path.add(new EntityControlPathItemRelative(new BlockPositionDelta(  5,  0,   5)));
-                lC.path.add(new EntityControlPathItemRelative(new BlockPositionDelta( -5,  0,  -5)));
-                Framework.plugin.getEntityController().add(lC);
-            }
         } else if (aStrings[0].equalsIgnoreCase("spawn")) {
             Player lPlayer = (Player)aCommandSender;
             Location lLoc = lPlayer.getLocation().add(1, 0, 1);
